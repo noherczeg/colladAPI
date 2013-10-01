@@ -1,4 +1,4 @@
 colladAPI
 =========
 
-Backend for Collad
+Rest API for Collad
