@@ -12,7 +12,7 @@ interface CRUDService {
 
     public function findById($id);
 
-    public function update($id, array $userData);
+    public function update($id, array $entityData);
 
     public function delete($id);
 

@@ -8,29 +8,20 @@
 namespace ColladAPI\Entities;
 
 
-use ColladAPI\Exceptions\ValidationException;
-use Illuminate\Database\Eloquent\Model;
+use ColladAPI\Entities\ColladEntity;
 
-class PalyazatTipus extends Model {
+class PalyazatTipus extends ColladEntity {
 
     protected $table = "palyazat_tipus";
 
+    protected $fillable = ['nev'];
+
+    protected $rules = [
+        'cime' => 'required|alpha_num|between:2,256'
+    ];
+
     public function palyazatok() {
         return $this->hasMany('ColladAPI\\Entities\\Palyazat', 'tipus_id');
-    }
-
-    /**
-     * @throws ValidationException
-     */
-    public function validate()
-    {
-        $validator = Validator::make($this->attributes, [
-            'cime' => 'required|alpha_num|between:2,256'
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
     }
 
 }

@@ -7,13 +7,28 @@
 
 namespace ColladAPI\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use ColladAPI\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Validator;
+use ColladAPI\Entities\ColladEntity;
 
-class Palyazat extends Model {
+class Palyazat extends ColladEntity {
 
     protected $table = "palyazat";
+
+    protected $fillable = [
+        'cime', 'orszag_id', 'tipus_id', 'statusz_id', 'konstrukcio', 'vezeto', 'osszeg_igenyelt', 'osszeg_onero',
+        'beadasi_datum', 'kezdo_datum', 'vege_datum', 'leiras'
+    ];
+
+    protected $rules = [
+        'cime' => 'required|alpha_num|between:2,256',
+        'konstrukcio' => 'max:256',
+        'vezeto' => 'integer',
+        'osszeg_igenyelt' => 'numeric',
+        'osszeg_onero' => 'numeric',
+        'beadasi_datum' => 'date',
+        'kezdo_datum' => 'date',
+        'vege_datum' => 'date',
+        'leiras' => 'max:512'
+    ];
 
     public function bevetelek() {
         return $this->hasMany('ColladAPI\\Entities\\Bevetel', 'palyazat_id');
@@ -59,22 +74,4 @@ class Palyazat extends Model {
         return $this->belongsTo('ColladAPI\\Entities\\TudomanyTerulet', 'palyazat_has_tudomanyterulet', 'palyazat_id', 'tudomanyterulet_id');
     }
 
-    public function validate()
-    {
-        $validator = Validator::make($this->attributes, [
-            'cime' => 'required|alpha_num|between:2,256',
-            'konstrukcio' => 'max:256',
-            'vezeto' => 'integer',
-            'osszeg_igenyelt' => 'numeric',
-            'osszeg_onero' => 'numeric',
-            'beadasi_datum' => 'date',
-            'kezdo_datum' => 'date',
-            'vege_datum' => 'date',
-            'leiras' => 'max:512'
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-    }
 }

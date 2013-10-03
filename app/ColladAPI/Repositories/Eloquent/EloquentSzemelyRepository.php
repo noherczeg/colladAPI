@@ -13,12 +13,19 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class EloquentSzemelyRepository implements SzemelyRepository {
 
+    private $szemely;
+
+    public function __construct(Szemely $szemely)
+    {
+        $this->szemely = $szemely;
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Collection|static
      */
     public function all()
     {
-        return Szemely::with('szakok', 'szakok.kepzesszint', 'dijak')->get();
+        return $this->szemely->with('szakok', 'szakok.kepzesszint', 'dijak')->get();
     }
 
     /**
@@ -28,7 +35,10 @@ class EloquentSzemelyRepository implements SzemelyRepository {
      */
     public function findById($szemelyId)
     {
-        return Szemely::findOrFail($szemelyId);
+        return $this->szemely->with(
+            'szakok', 'szakok.kepzesszint', 'dijak', 'alkotasok', 'esemenyek', 'nyelvtudasok', 'fokozatok',
+            'intezmenyek', 'szervezetek', 'tanszekek', 'publikaciok', 'csoportok', 'tanulmanyutak', 'palyazatok'
+        )->where('id', '=', $szemelyId)->firstOrFail();
     }
 
     /**
@@ -46,7 +56,7 @@ class EloquentSzemelyRepository implements SzemelyRepository {
      */
     public function delete($entityId)
     {
-        return Szemely::destroy($entityId);
+        return $this->szemely->destroy($entityId);
     }
 
     /**
@@ -56,7 +66,7 @@ class EloquentSzemelyRepository implements SzemelyRepository {
      */
     public function findByAPIKey($key)
     {
-        return Szemely::where('api_kulcs', '=', $key)->firstOrFail();
+        return $this->szemely->where('api_kulcs', '=', $key)->firstOrFail();
     }
 
     /**
@@ -66,7 +76,7 @@ class EloquentSzemelyRepository implements SzemelyRepository {
      */
     public function findByEmail($email)
     {
-        return Szemely::where('email', '=', $email)->firstOrFail();
+        return $this->szemely->where('email', '=', $email)->firstOrFail();
     }
 
     /**
@@ -77,6 +87,6 @@ class EloquentSzemelyRepository implements SzemelyRepository {
      */
     public function findByIdWithDijak($id)
     {
-        return Szemely::with('dijak')->where('id', '=', $id)->firstOrFail();
+        return $this->szemely->with('dijak')->where('id', '=', $id)->firstOrFail();
     }
 }

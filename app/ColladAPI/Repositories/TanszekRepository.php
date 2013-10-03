@@ -7,7 +7,7 @@
 
 namespace ColladAPI\Repositories;
 
-
+use ColladAPI\Repositories\CRUDRepository;
 use ColladAPI\Entities\Tanszek;
 
 interface TanszekRepository extends CRUDRepository {

@@ -7,27 +7,20 @@
 
 namespace ColladAPI\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use ColladAPI\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Validator;
+use ColladAPI\Entities\ColladEntity;
 
-class PalyazatStatusz extends Model {
+class PalyazatStatusz extends ColladEntity {
 
     protected $table = "palyazat_statusz";
 
+    protected $fillable = ['nev'];
+
+    protected $rules = [
+        'nev' => 'required|alpha_num|between:2,256'
+    ];
+
     public function palyazatok() {
         return $this->hasMany('ColladAPI\\Entities\\Palyazat', 'statusz_id');
-    }
-
-    public function validate()
-    {
-        $validator = Validator::make($this->attributes, [
-            'nev' => 'required|alpha_num|between:2,256'
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
     }
 
 }

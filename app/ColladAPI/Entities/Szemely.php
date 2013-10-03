@@ -7,13 +7,12 @@
 
 namespace ColladAPI\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use ColladAPI\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Validator;
+use ColladAPI\Entities\ColladEntity;
+use Illuminate\Auth\Reminders\RemindableInterface;
 use Illuminate\Auth\UserInterface;
 use Illuminate\Support\Facades\Hash;
 
-class Szemely extends Model implements UserInterface {
+class Szemely extends ColladEntity implements UserInterface, RemindableInterface {
 
     protected $table = "szemely";
 
@@ -26,28 +25,16 @@ class Szemely extends Model implements UserInterface {
     /** "al" torles be/ki kapcsolasa */
     protected $softDelete = false;
 
-    /**
-     * Szemelyi adatok validacioja
-     *
-     * @throws \ColladAPI\Exceptions\ValidationException
-     */
-    public function validate()
-    {
-        $validator = Validator::make($this->attributes, [
-            'titulus' => 'alpha|between:2,50',
-            'csaladnev' => 'required|alpha|between:2,100',
-            'keresztnev' => 'required|alpha|between:2,100',
-            'email' => 'required|email|unique:szemely',
-            'jelszo' => 'required|between:6,32',
-            'megjegyzes' => 'max:512',
-            'eha_kod' => 'unique:szemely|alpha',
-            'api_kulcs' => 'unique:szemely'
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-    }
+    protected $rules = [
+        'titulus' => 'alpha|between:2,50',
+        'csaladnev' => 'required|alpha|between:2,100',
+        'keresztnev' => 'required|alpha|between:2,100',
+        'email' => 'required|email|unique:szemely',
+        'jelszo' => 'required|between:6,32',
+        'megjegyzes' => 'max:512',
+        'eha_kod' => 'unique:szemely|alpha',
+        'api_kulcs' => 'unique:szemely'
+    ];
 
     /**
      * Szemely egyedi azonositoja
@@ -117,6 +104,10 @@ class Szemely extends Model implements UserInterface {
         return $this->belongsToMany('ColladAPI\\Entities\\Esemeny', 'esemeny_has_szemely', 'szemely_id', 'esemeny_id');
     }
 
+    public function szerepkorok() {
+        return $this->belongsTo('ColladAPI\\Entities\\Szerepkor', 'esemeny_has_szemely', 'szerepkor_id')->withPivot('megjegyzes');
+    }
+
     public function nyelvtudasok()
     {
         return $this->hasMany('ColladAPI\\Entities\\Nyelvtudas', 'szemely_id');
@@ -125,6 +116,11 @@ class Szemely extends Model implements UserInterface {
     public function dijak()
     {
         return $this->hasMany('ColladAPI\\Entities\\Dij', 'szemely_id');
+    }
+
+    public function fokozatok()
+    {
+        return $this->hasMany('ColladAPI\\Entities\\Fokozat', 'szemely_id');
     }
 
     public function intezmenyek()
@@ -180,5 +176,15 @@ class Szemely extends Model implements UserInterface {
     public function palyazatSzerepkorok()
     {
         return $this->belongsToMany('ColladAPI\\Entities\\PalyazatSzerepkor', 'palyazat_has_szemely', 'szemely_id', 'szerepkor_id');
+    }
+
+    /**
+     * Get the e-mail address where password reminders are sent.
+     *
+     * @return string
+     */
+    public function getReminderEmail()
+    {
+        return $this->getAttribute('email');
     }
 }

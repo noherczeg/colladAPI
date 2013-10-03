@@ -34,36 +34,28 @@ App::error(function(Symfony\Component\HttpKernel\Exception\HttpException $e, $co
             $default_message = 'Ismeretlen hiba lépett fel';
     }
 
-    return Response::json(array(
-        'error' => $e->getMessage() ?: $default_message,
-    ), $code, $headers);
+    return Response::json([ 'reason' => $e->getMessage() ?: $default_message, ], $code, $headers);
 });
 
 App::error(function(ErrorMessageException $e) {
     $messages = $e->getMessages()->all();
 
-    return Response::json(array(
-        'error' => $messages[0],
-    ), 400);
+    return Response::json([ 'reason' => $messages[0], ], 400);
 });
 
 App::error(function(NotFoundException $e) {
-    $default_message = 'The requested resource was not found';
+    $default_message = 'a kért erőforrás nem található';
 
-    return Response::json(array(
-        'error' => $e->getMessage() ?: $default_message,
-    ), 404);
+    return Response::json([ 'reason' => $e->getMessage() ?: $default_message, ], 404);
 });
 
 App::error(function(PermissionException $e) {
-    $default_message = 'Insufficient privileges to perform this action';
+    $default_message = 'nincs jogosultsága a kívánt művelethez';
 
-    return Response::json(array(
-        'error' => $e->getMessage() ?: $default_message,
-    ), 403);
+    return Response::json([ 'reason' => $e->getMessage() ?: $default_message, ], 403);
 });
 
 App::error(function(\Illuminate\Database\Eloquent\ModelNotFoundException $e)
 {
-    return Response::json(['error' => 'The requested resource was not found'], 404);
+    return Response::json(['reason' => 'a kért erőforrás nem található'], 404);
 });

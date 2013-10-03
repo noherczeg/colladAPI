@@ -7,13 +7,18 @@
 
 namespace ColladAPI\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use ColladAPI\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Validator;
+use ColladAPI\Entities\ColladEntity;
 
-class TDKDolgozatSzekcio extends Model {
+class TDKDolgozatSzekcio extends ColladEntity {
 
     protected $table = "tdkdolgozat_szekcio";
+
+    protected $fillable = ['nev', 'megjegyzes'];
+
+    protected $rules = [
+        'nev' => 'required|alpha_num|between:2,256',
+        'megjegyzes' => 'max:512'
+    ];
 
     public function kariTDKDolgozatok() {
         return $this->hasMany('ColladAPI\\Entities\\TDKDolgozat', 'kari_tdk_szekcio_id');
@@ -21,18 +26,6 @@ class TDKDolgozatSzekcio extends Model {
 
     public function oTDKDolgozatok() {
         return $this->hasMany('ColladAPI\\Entities\\TDKDolgozat', 'otdk_szekcio_id');
-    }
-
-    public function validate()
-    {
-        $validator = Validator::make($this->attributes, [
-            'nev' => 'required|alpha_num|between:2,256',
-            'megjegyzes' => 'max:512'
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
     }
 
 }

@@ -7,13 +7,21 @@
 
 namespace ColladAPI\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use ColladAPI\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Validator;
+use ColladAPI\Entities\ColladEntity;
 
-class Alkotas extends Model {
+class Alkotas extends ColladEntity {
 
     protected $table = "alkotas";
+
+    protected $fillable = ['tipus_id', 'nev', 'datum', 'leiras', 'mtmt_id', 'megjegyzes'];
+
+    protected $rules = [
+        'nev' => 'required|alpha_num|between:2,256',
+        'datum' => 'required|date',
+        'leiras' => 'max:512',
+        'mtmt_id' => 'max:64',
+        'megjegyzes' => 'max:512'
+    ];
 
     public function szemelyek() {
         return $this->belongsToMany('ColladAPI\\Entities\\Szemely', 'alkotas_has_szemely', 'alkotas_id', 'szemely_id')->withPivot('szemely_sorrend');
@@ -27,18 +35,4 @@ class Alkotas extends Model {
         return $this->belongsToMany('ColladAPI\\Entities\\Palyazat', 'palyazat_has_alkotas', 'alkotas_id', 'palyazat_id');
     }
 
-    public function validate()
-    {
-        $validator = Validator::make($this->attributes, [
-            'nev' => 'required|alpha_num|between:2,256',
-            'datum' => 'required|date',
-            'leiras' => 'max:512',
-            'mtmt_id' => 'max:64',
-            'megjegyzes' => 'max:512'
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-    }
 }

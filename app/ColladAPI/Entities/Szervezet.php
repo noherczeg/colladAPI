@@ -7,13 +7,16 @@
 
 namespace ColladAPI\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use ColladAPI\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Validator;
+use ColladAPI\Entities\ColladEntity;
 
-class Szervezet extends Model {
+class Szervezet extends ColladEntity {
 
     protected $table = "szervezet";
+
+    protected $rules = [
+        'nev' => 'required|alpha_num|between:2,256',
+        'leiras' => 'max:512'
+    ];
 
     public function szemelyek() {
         return $this->belongsToMany('ColladAPI\\Entities\\Szemely', 'szemely_has_szervezet', 'szervezet_id', 'szemely_id')->withPivot('kezdo_datum', 'vege_datum', 'megjegyzes');
@@ -25,18 +28,6 @@ class Szervezet extends Model {
 
     public function szerepkor() {
         return $this->belongsTo('ColladAPI\\Entities\\SzervezetSzerepkor');
-    }
-
-    public function validate()
-    {
-        $validator = Validator::make($this->attributes, [
-            'nev' => 'required|alpha_num|between:2,256',
-            'leiras' => 'max:512'
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
     }
 
 }

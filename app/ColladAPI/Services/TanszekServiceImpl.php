@@ -8,50 +8,16 @@
 namespace ColladAPI\Services;
 
 use ColladAPI\Entities\Tanszek;
+use ColladAPI\Services\TanszekService;
 use ColladAPI\Exceptions\ErrorMessageException;
-use ColladAPI\Exceptions\ValidationException;
 use ColladAPI\Repositories\TanszekRepository;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use ColladAPI\Services\CRUDServiceImpl;
 
-class TanszekServiceImpl implements TanszekService {
-
-    private $tanszekRepository;
+class TanszekServiceImpl extends CRUDServiceImpl implements TanszekService {
 
     public function __construct(TanszekRepository $tanszekRepository)
     {
-        $this->tanszekRepository = $tanszekRepository;
-    }
-
-    public function findById($id)
-    {
-        return $this->tanszekRepository->findById($id);
-    }
-
-    public function update($id, array $userData)
-    {
-        $tanszek = $this->tanszekRepository->findById($id);
-        $tanszek->fill($userData);
-        $tanszek->validate();
-
-        if (!$tanszek->save()) {
-            throw new ValidationException('Megadott tanszék adatok között voltak hibásak');
-            return false;
-        }
-
-        return $tanszek;
-    }
-
-    public function delete($id)
-    {
-        $this->tanszekRepository->delete($id);
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Collection|static
-     */
-    public function all()
-    {
-        return $this->tanszekRepository->all();
+        $this->crudRepository = $tanszekRepository;
     }
 
     public function save(array $tanszekData)
@@ -61,7 +27,7 @@ class TanszekServiceImpl implements TanszekService {
         $tanszek->validate();
 
         if (!$tanszek->save()) {
-            throw new ValidationException('Megadott tanszék adatok között voltak hibásak');
+            throw new ErrorMessageException('Hiba az adatok mentése közben');
             return false;
         }
 
@@ -70,6 +36,6 @@ class TanszekServiceImpl implements TanszekService {
 
     public function szemelyekByDate($tanszekId, \DateTime $date)
     {
-        return $this->tanszekRepository->szemelyekByDate($tanszekId, $date);
+        return $this->crudRepository->szemelyekByDate($tanszekId, $date);
     }
 }

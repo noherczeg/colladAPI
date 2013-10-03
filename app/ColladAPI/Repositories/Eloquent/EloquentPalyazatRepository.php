@@ -7,19 +7,25 @@
 
 namespace ColladAPI\Repositories\Eloquent;
 
-
 use ColladAPI\Entities\Palyazat;
 use ColladAPI\Repositories\PalyazatRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class EloquentPalyazatRepository implements PalyazatRepository {
 
+    private $palyazat;
+
+    public function __construct(Palyazat $palyazat)
+    {
+        $this->palyazat = $palyazat;
+    }
+
     /**
      * @return \Illuminate\Database\Eloquent\Collection|static
      */
     public function all()
     {
-        return Palyazat::with('tipus', 'orszag', 'statusz')->get();
+        return $this->palyazat->with('tipus', 'orszag', 'statusz')->get();
     }
 
     /**
@@ -29,7 +35,7 @@ class EloquentPalyazatRepository implements PalyazatRepository {
      */
     public function findById($entityId)
     {
-        return Palyazat::with('tipus', 'orszag', 'statusz')->findOrFail($entityId);
+        return $this->palyazat->with('tipus', 'orszag', 'statusz', 'alkotasok', 'szemelyek', 'tudomanyteruletek')->findOrFail($entityId);
     }
 
     /**
@@ -38,7 +44,7 @@ class EloquentPalyazatRepository implements PalyazatRepository {
      */
     public function delete($entityId)
     {
-        return Palyazat::destroy($entityId);
+        return $this->palyazat->destroy($entityId);
     }
 
     /**
@@ -47,6 +53,6 @@ class EloquentPalyazatRepository implements PalyazatRepository {
      */
     public function saveOrUpdate(Palyazat $palyazat)
     {
-        $palyazat->save();
+        return $palyazat->save();
     }
 }

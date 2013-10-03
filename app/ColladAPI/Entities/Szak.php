@@ -7,13 +7,17 @@
 
 namespace ColladAPI\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use ColladAPI\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Validator;
+use ColladAPI\Entities\ColladEntity;
 
-class Szak extends Model {
+class Szak extends ColladEntity {
 
     protected $table = 'szak';
+
+    protected $fillable = ['nev', 'kepzesszint_id'];
+
+    protected $rules = [
+        'nev' => 'required|alpha_num|between:2,256'
+    ];
 
     protected $hidden  = ['pivot'];
 
@@ -23,16 +27,5 @@ class Szak extends Model {
 
     public function kepzesszint() {
         return $this->belongsTo('ColladAPI\\Entities\\KepzesSzint');
-    }
-
-    public function validate()
-    {
-        $validator = Validator::make($this->attributes, [
-            'nev' => 'required|alpha_num|between:2,256'
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
     }
 }

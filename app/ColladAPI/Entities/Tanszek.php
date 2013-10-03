@@ -7,13 +7,17 @@
 
 namespace ColladAPI\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use ColladAPI\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Validator;
+use ColladAPI\Entities\ColladEntity;
 
-class Tanszek extends Model {
+class Tanszek extends ColladEntity {
 
     protected $table = "tanszek";
+
+    protected $fillable = ['nev'];
+
+    protected $rules = [
+        'nev' => 'required|alpha_num|between:2,256'
+    ];
 
     protected $hidden  = ['pivot'];
 
@@ -29,14 +33,4 @@ class Tanszek extends Model {
         return $this->belongsToMany('ColladAPI\\Entities\\Intezet', 'intezet_has_tanszek', 'tanszek_id', 'intezet_id')->withPivot('kezdo_datum', 'vege_datum');
     }
 
-    public function validate()
-    {
-        $validator = Validator::make($this->attributes, [
-            'nev' => 'required|alpha_num|between:2,256'
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-    }
 }

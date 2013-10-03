@@ -8,58 +8,22 @@
 namespace ColladAPI\Services;
 
 use ColladAPI\Entities\Palyazat;
-use ColladAPI\Exceptions\ValidationException;
+use ColladAPI\Exceptions\ErrorMessageException;
 use ColladAPI\Repositories\PalyazatRepository;
 use ColladAPI\Services\PalyazatService;
+use ColladAPI\Services\CRUDServiceImpl;
 
-class PalyazatServiceImpl implements PalyazatService {
-
-    protected $palyazatRepository;
+class PalyazatServiceImpl extends CRUDServiceImpl implements PalyazatService {
 
     public function __construct(PalyazatRepository $palyazatRepository)
     {
-        $this->palyazatRepository = $palyazatRepository;
-    }
-
-    public function findById($id)
-    {
-        return $this->palyazatRepository->findById($id);
-    }
-
-    /**
-     * @param $id
-     * @param array $palyazatData
-     * @return bool|Palyazat
-     * @throws ValidationException
-     */
-    public function update($id, array $palyazatData)
-    {
-        $palyazat = $this->palyazatRepository->findById($id);
-        $palyazat->fil($palyazatData);
-        $palyazat->validate();
-
-        if (!$palyazat->save()) {
-            throw new ValidationException('Megadott pályázat adatok között voltak hibásak');
-            return false;
-        }
-
-        return $palyazat;
-    }
-
-    public function delete($id)
-    {
-        $this->palyazatRepository->delete($id);
-    }
-
-    public function all()
-    {
-        return $this->palyazatRepository->all();
+        $this->crudRepository = $palyazatRepository;
     }
 
     /**
      * @param array $palyazatData
      * @return bool|Palyazat
-     * @throws ValidationException
+     * @throws ErrorMessageException
      */
     public function save(array $palyazatData)
     {
@@ -68,7 +32,7 @@ class PalyazatServiceImpl implements PalyazatService {
         $palyazat->validate();
 
         if (!$palyazat->save()) {
-            throw new ValidationException('Megadott pályázat adatok között voltak hibásak');
+            throw new ErrorMessageException('Hiba az adatok mentése során');
             return false;
         }
 

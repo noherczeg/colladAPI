@@ -7,37 +7,30 @@
 
 namespace ColladAPI\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use ColladAPI\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Validator;
+use ColladAPI\Entities\ColladEntity;
 
-class Nyelvtudas extends Model {
+class Nyelvtudas extends ColladEntity {
+
+    protected $rules = [
+        'bizonyitvany' => 'between:2,256',
+        'datum' => 'date',
+        'megjegyzes' => 'max:512'
+    ];
 
     protected $table = "nyelvtudas";
 
+    protected $fillable = ['szemely_id', 'nyelv_id', 'nyelvtudas_fok_id', 'bizonyitvany', 'datum', 'megjegyzes'];
+
     public function szemely() {
-        return $this->belongsTo('ColladAPI\\Entities\\Szemely');
+        return $this->belongsTo('ColladAPI\\Entities\\Szemely', 'szemely_id');
     }
 
     public function nyelv() {
-        return $this->belongsTo('ColladAPI\\Entities\\Nyelv');
+        return $this->belongsTo('ColladAPI\\Entities\\Nyelv', 'nyelv_id');
     }
 
     public function nyelvtudasFok() {
-        return $this->belongsTo('ColladAPI\\Entities\\NyelvtudasFok');
-    }
-
-    public function validate()
-    {
-        $validator = Validator::make($this->attributes, [
-            'bizonyitvany' => 'between:2,256',
-            'datum' => 'date',
-            'megjegyzes' => 'max:512'
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
+        return $this->belongsTo('ColladAPI\\Entities\\NyelvtudasFok', 'nyelvtudas_fok_id');
     }
 
 }

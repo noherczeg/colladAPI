@@ -7,13 +7,19 @@
 
 namespace ColladAPI\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use ColladAPI\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Validator;
+use ColladAPI\Entities\ColladEntity;
 
-class Bevetel extends Model {
+class Bevetel extends ColladEntity {
 
     protected $table = "bevetel";
+
+    protected $fillable = ['osszeg', 'datum', 'tipus_id', 'leiras', 'palyazat_id', 'tanszek_id', 'intezet_id'];
+
+    protected $rules = [
+        'osszeg' => 'required|numeric',
+        'datum' => 'required|date',
+        'leiras' => 'required|max:512'
+    ];
 
     public function beruhazasok() {
         return $this->hasMany('ColladAPI\\Entities\\Beruhazas', 'bevetel_id');
@@ -33,19 +39,6 @@ class Bevetel extends Model {
 
     public function intezet() {
         return $this->belongsTo('ColladAPI\\Entities\\Intezet');
-    }
-
-    public function validate()
-    {
-        $validator = Validator::make($this->attributes, [
-            'osszeg' => 'required|numeric',
-            'datum' => 'required|date',
-            'leiras' => 'required|max:512'
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
     }
 
 }

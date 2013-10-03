@@ -7,13 +7,20 @@
 
 namespace ColladAPI\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use ColladAPI\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Validator;
+use ColladAPI\Entities\ColladEntity;
 
-class Dij extends Model {
+class Dij extends ColladEntity {
 
     protected $table = "dij";
+
+    protected $fillable = ['szemely_id', 'orszag_id', 'megnevezes', 'datum', 'adomanyozo', 'leiras'];
+
+    protected $rules = [
+        'megnevezes' => 'required|alpha_num|between:2,256',
+        'datum' => 'required|date',
+        'leiras' => 'max:512',
+        'adomanyozo' => 'alpha_num|max:256'
+    ];
 
     public function szemely() {
         return $this->belongsTo('ColladAPI\\Entities\\Szemely');
@@ -21,20 +28,6 @@ class Dij extends Model {
 
     public function orszag() {
         return $this->belongsTo('ColladAPI\\Entities\\Orszag');
-    }
-
-    public function validate()
-    {
-        $validator = Validator::make($this->attributes, [
-            'megnevezes' => 'required|alpha_num|between:2,256',
-            'datum' => 'required|date',
-            'leiras' => 'max:512',
-            'adomanyozo' => 'alpha_num|max:256'
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
     }
 
 }

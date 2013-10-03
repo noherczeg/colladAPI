@@ -7,26 +7,32 @@
 
 namespace ColladAPI\Repositories\Eloquent;
 
-
 use ColladAPI\Entities\Tanszek;
 use ColladAPI\Repositories\TanszekRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class EloquentTanszekRepository implements TanszekRepository {
 
+    private $tanszek;
+
+    public function __construct(Tanszek $tanszek)
+    {
+        $this->tanszek = $tanszek;
+    }
+
     public function all()
     {
-        return Tanszek::with('szemelyek')->get();
+        return $this->tanszek->with('szemelyek')->get();
     }
 
     public function findById($szemelyId)
     {
-        return Tanszek::find($szemelyId);
+        return $this->tanszek->find($szemelyId);
     }
 
     public function delete($entityId)
     {
-        return Tanszek::destroy($entityId);
+        return $this->tanszek->destroy($entityId);
     }
 
     public function saveOrUpdate(Tanszek $entity)
@@ -42,7 +48,7 @@ class EloquentTanszekRepository implements TanszekRepository {
      */
     public function szemelyekByDate($tanszekId, \DateTime $date)
     {
-        $tanszekek =  Tanszek::with(['szemelyek' => function($query) use ($date) {
+        $tanszekek =  $this->tanszek->with(['szemelyek' => function($query) use ($date) {
             $query->where('kezdo_datum', '<=', $date->format('Y-m-d'))->where('vege_datum', '>=', $date->format('Y-m-d'));
         }])->firstOrFail();
 

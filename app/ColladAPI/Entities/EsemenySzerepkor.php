@@ -7,13 +7,17 @@
 
 namespace ColladAPI\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use ColladAPI\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Validator;
+use ColladAPI\Entities\ColladEntity;
 
-class EsemenySzerepkor extends Model {
+class EsemenySzerepkor extends ColladEntity {
 
     protected $table = "esemeny_szerepkor";
+
+    protected $fillable = ['nev'];
+
+    protected $rules = [
+        'nev' => 'required|alpha_num|between:2,256'
+    ];
 
     public function szemelyek() {
         return $this->belongsToMany('ColladAPI\\Entities\\Szemely', 'esemeny_has_szemely', 'esemeny_szerepkor_id', 'szemely_id');
@@ -21,16 +25,5 @@ class EsemenySzerepkor extends Model {
 
     public function esemenyek() {
         return $this->belongsToMany('ColladAPI\\Entities\\Esemeny', 'esemeny_has_szemely', 'esemeny_szerepkor_id', 'esemeny_id');
-    }
-
-    public function validate()
-    {
-        $validator = Validator::make($this->attributes, [
-            'nev' => 'required|alpha_num|between:2,256'
-        ]);
-
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
     }
 }

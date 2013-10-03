@@ -7,24 +7,17 @@
 
 namespace ColladAPI\Entities;
 
-use Illuminate\Database\Eloquent\Model;
-use ColladAPI\Exceptions\ValidationException;
-use Illuminate\Support\Facades\Validator;
+use ColladAPI\Entities\ColladEntity;
 
-class Nyelv extends Model {
+class Nyelv extends ColladEntity {
 
     protected $table = "nyelv";
 
-    public function validate()
-    {
-        $validator = Validator::make($this->attributes, [
-            'nev' => 'required|alpha|between:2,32',
-            'kod' => 'required|alpha|size:2'
-        ]);
+    protected $fillable = ['nev', 'kod'];
 
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-    }
+    protected $rules = [
+        'nev' => 'required|alpha|between:2,32',
+        'kod' => 'required|alpha|size:2'
+    ];
 
 }
