@@ -5,6 +5,8 @@
  * Time: 11:50 PM
  */
 
+namespace ColladAPI\Exceptions;
+
 use RuntimeException;
 
 class PermissionException extends RuntimeException {}
