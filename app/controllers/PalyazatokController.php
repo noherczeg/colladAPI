@@ -4,10 +4,10 @@
  * Date: 10/1/13
  * Time: 10:47 PM
  */
-
 use ColladAPI\Services\PalyazatService;
 
-class PalyazatokController extends BaseController {
+class PalyazatokController extends BaseController
+{
 
     protected $palyazatService;
 
@@ -46,9 +46,9 @@ class PalyazatokController extends BaseController {
         try {
             $palyazat = $this->palyazatService->save(Input::json()->all());
             return Response::json($palyazat->toArray(), 201);
-        } catch(ValidationException $ex) {
+        } catch (ValidationException $ex) {
             App::abort(500, $ex->getMessage());
-        } catch(ErrorMessageException $exy) {
+        } catch (ErrorMessageException $exy) {
             App::abort(500, $exy->getMessage());
         }
     }
@@ -56,23 +56,25 @@ class PalyazatokController extends BaseController {
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id            
      * @return Response
      */
     public function show($id)
     {
         $palyazat = $this->palyazatService->findById($id);
-
+        
         if ($palyazat == null)
-            return Response::json(['reason' => 'not found'], 404);
-
+            return Response::json([
+                'reason' => 'not found'
+            ], 404);
+        
         return Response::json($palyazat, 200);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id            
      * @return Response
      */
     public function edit($id)
@@ -83,7 +85,7 @@ class PalyazatokController extends BaseController {
     /**
      * Update the specified resource in storage.
      *
-     * @param  int  $id
+     * @param int $id            
      * @return Response
      */
     public function update($id)
@@ -91,7 +93,7 @@ class PalyazatokController extends BaseController {
         try {
             $updated = $this->palyazatService->update($id, Input::json()->all());
             return Response::json($updated->toArray());
-        } catch(ValidationException $ex) {
+        } catch (ValidationException $ex) {
             App::abort(500, $ex->getMessage());
         }
     }
@@ -99,12 +101,11 @@ class PalyazatokController extends BaseController {
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id            
      * @return Response
      */
     public function destroy($id)
     {
         //
     }
-
 }

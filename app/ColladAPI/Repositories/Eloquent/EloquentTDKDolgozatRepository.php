@@ -4,14 +4,13 @@
  * Date: 10/3/13
  * Time: 11:32 PM
  */
-
 namespace ColladAPI\Repositories\Eloquent;
-
 
 use ColladAPI\Entities\TDKDolgozat;
 use ColladAPI\Repositories\TDKDolgozatRepository;
 
-class EloquentTDKDolgozatRepository implements TDKDolgozatRepository {
+class EloquentTDKDolgozatRepository implements TDKDolgozatRepository
+{
 
     private $tdkDolgozat;
 

@@ -4,14 +4,13 @@
  * Date: 10/3/13
  * Time: 11:22 PM
  */
-
 namespace ColladAPI\Repositories\Eloquent;
-
 
 use ColladAPI\Entities\Esemeny;
 use ColladAPI\Repositories\EsemenyRepository;
 
-class EloquentEsemenyRepository implements EsemenyRepository {
+class EloquentEsemenyRepository implements EsemenyRepository
+{
 
     private $esemeny;
 

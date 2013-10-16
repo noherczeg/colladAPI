@@ -4,7 +4,6 @@
  * Date: 9/27/13
  * Time: 1:17 AM
  */
-
 namespace ColladAPI\Services;
 
 use ColladAPI\Entities\Szemely;
@@ -13,7 +12,8 @@ use ColladAPI\Exceptions\ErrorMessageException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use ColladAPI\Services\CRUDServiceImpl;
 
-class SzemelyServiceImpl extends CRUDServiceImpl implements SzemelyService {
+class SzemelyServiceImpl extends CRUDServiceImpl implements SzemelyService
+{
 
     protected $mailService;
 
@@ -24,8 +24,9 @@ class SzemelyServiceImpl extends CRUDServiceImpl implements SzemelyService {
     }
 
     /**
-     * @param array $entityData
-     * @return bool|Szemely
+     *
+     * @param array $entityData            
+     * @return bool Szemely
      * @throws \ColladAPI\Exceptions\ErrorMessageException
      */
     public function register(array $entityData)
@@ -33,18 +34,20 @@ class SzemelyServiceImpl extends CRUDServiceImpl implements SzemelyService {
         $szemely = new Szemely();
         $szemely->fill($entityData);
         $szemely->validate();
-
-        if (!$szemely->save()) {
+        
+        if (! $szemely->save()) {
             throw new ErrorMessageException('Személy mentése közben hiba lépett fel');
             return false;
         }
-
+        
         $this->mailService->sendRegistered($szemely);
         return $szemely;
     }
 
     /**
-     * @param $id
+     *
+     * @param
+     *            $id
      * @throws ModelNotFoundException
      * @return Szemely
      */

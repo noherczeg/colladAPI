@@ -4,14 +4,13 @@
  * Date: 10/3/13
  * Time: 11:18 PM
  */
-
 namespace ColladAPI\Repositories\Eloquent;
-
 
 use ColladAPI\Entities\Dij;
 use ColladAPI\Repositories\DijRepository;
 
-class EloquentDijRepository implements DijRepository {
+class EloquentDijRepository implements DijRepository
+{
 
     private $dij;
 

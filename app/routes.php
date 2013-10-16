@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Response;
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -13,7 +14,7 @@
 
 Route::get('/', function()
 {
-	return View::make('hello');
+	return Response::make('hello', 200);
 });
 
 Route::resource('szemelyek', 'SzemelyekController');

@@ -4,14 +4,14 @@
  * Date: 10/1/13
  * Time: 8:32 PM
  */
-
 namespace ColladAPI\Repositories\Eloquent;
 
 use ColladAPI\Entities\Tanszek;
 use ColladAPI\Repositories\TanszekRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class EloquentTanszekRepository implements TanszekRepository {
+class EloquentTanszekRepository implements TanszekRepository
+{
 
     private $tanszek;
 
@@ -41,21 +41,28 @@ class EloquentTanszekRepository implements TanszekRepository {
     }
 
     /**
-     * @param $tanszekId
-     * @param \DateTime $date
-     * @return \Illuminate\Database\Eloquent\Collection|static
+     *
+     * @param
+     *            $tanszekId
+     * @param \DateTime $date            
+     * @return \Illuminate\Database\Eloquent\Collection static
      * @throws ModelNotFoundException
      */
-    public function szemelyekByDate($tanszekId, \DateTime $date)
+    public function szemelyekByDate($tanszekId,\DateTime $date)
     {
-        $tanszekek =  $this->tanszek->with(['szemelyek' => function($query) use ($date) {
-            $query->where('kezdo_datum', '<=', $date->format('Y-m-d'))->where('vege_datum', '>=', $date->format('Y-m-d'));
-        }])->firstOrFail();
-
+        $tanszekek = $this->tanszek->with([
+            'szemelyek' => function ($query) use($date)
+            {
+                $query->where('kezdo_datum', '<=', $date->format('Y-m-d'))
+                    ->where('vege_datum', '>=', $date->format('Y-m-d'));
+            }
+        ])
+            ->firstOrFail();
+        
         $szemelyek = $tanszekek->szemelyek;
-        if($szemelyek->isEmpty())
-            throw new ModelNotFoundException;
-
+        if ($szemelyek->isEmpty())
+            throw new ModelNotFoundException();
+        
         return $tanszekek->szemelyek;
     }
 }

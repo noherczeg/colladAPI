@@ -4,14 +4,13 @@
  * Date: 10/3/13
  * Time: 11:12 PM
  */
-
 namespace ColladAPI\Repositories\Eloquent;
-
 
 use ColladAPI\Entities\Tanulmanyut;
 use ColladAPI\Repositories\TanulmanyutRepository;
 
-class EloquentTanulmanyutRepository implements TanulmanyutRepository {
+class EloquentTanulmanyutRepository implements TanulmanyutRepository
+{
 
     private $tanulmanyut;
 

@@ -4,14 +4,14 @@
  * Date: 10/1/13
  * Time: 10:21 PM
  */
-
 namespace ColladAPI\Repositories\Eloquent;
 
 use ColladAPI\Entities\Palyazat;
 use ColladAPI\Repositories\PalyazatRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class EloquentPalyazatRepository implements PalyazatRepository {
+class EloquentPalyazatRepository implements PalyazatRepository
+{
 
     private $palyazat;
 
@@ -21,7 +21,8 @@ class EloquentPalyazatRepository implements PalyazatRepository {
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection|static
+     *
+     * @return \Illuminate\Database\Eloquent\Collection static
      */
     public function all()
     {
@@ -29,9 +30,11 @@ class EloquentPalyazatRepository implements PalyazatRepository {
     }
 
     /**
-     * @param $entityId
+     *
+     * @param
+     *            $entityId
      * @throws ModelNotFoundException
-     * @return \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|static     *
+     * @return \Illuminate\Database\Eloquent\Collection \Illuminate\Database\Eloquent\Model static
      */
     public function findById($entityId)
     {
@@ -39,8 +42,10 @@ class EloquentPalyazatRepository implements PalyazatRepository {
     }
 
     /**
-     * @param $entityId
-     * @return bool|null
+     *
+     * @param
+     *            $entityId
+     * @return bool null
      */
     public function delete($entityId)
     {
@@ -48,8 +53,9 @@ class EloquentPalyazatRepository implements PalyazatRepository {
     }
 
     /**
-     * @param Palyazat $palyazat
-     * @return bool|null
+     *
+     * @param Palyazat $palyazat            
+     * @return bool null
      */
     public function saveOrUpdate(Palyazat $palyazat)
     {

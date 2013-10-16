@@ -4,7 +4,6 @@
  * Date: 9/25/13
  * Time: 9:10 PM
  */
-
 namespace ColladAPI\Entities;
 
 use ColladAPI\Entities\ColladEntity;
@@ -12,17 +11,34 @@ use Illuminate\Auth\Reminders\RemindableInterface;
 use Illuminate\Auth\UserInterface;
 use Illuminate\Support\Facades\Hash;
 
-class Szemely extends ColladEntity implements UserInterface, RemindableInterface {
+class Szemely extends ColladEntity implements UserInterface, RemindableInterface
+{
 
     protected $table = "szemely";
 
-    /** mass assignelheto ertekek */
-    protected $fillable = array('titulus', 'csaladnev', 'keresztnev', 'eha_kod', 'om_id', 'email', 'jelszo');
+    /**
+     * mass assignelheto ertekek
+     */
+    protected $fillable = array(
+        'titulus',
+        'csaladnev',
+        'keresztnev',
+        'eha_kod',
+        'om_id',
+        'email',
+        'jelszo'
+    );
 
-    /** kifele lathatatlan mezok (van whitelist megfelelo is!) */
-    protected $hidden = ['jelszo'];
+    /**
+     * kifele lathatatlan mezok (van whitelist megfelelo is!)
+     */
+    protected $hidden = [
+        'jelszo'
+    ];
 
-    /** "al" torles be/ki kapcsolasa */
+    /**
+     * "al" torles be/ki kapcsolasa
+     */
     protected $softDelete = false;
 
     protected $rules = [
@@ -64,18 +80,22 @@ class Szemely extends ColladEntity implements UserInterface, RemindableInterface
     /**
      * Automata jelszo hasheles.
      *
-     * @param string $jelszo
+     * @param string $jelszo            
      * @return void
      */
-    public function setJelszoAttribute($jelszo) {
+    public function setJelszoAttribute($jelszo)
+    {
         $this->attributes['jelszo'] = Hash::make($jelszo);
     }
 
     /**
      * EHA kodok mindig full upper caseltek
-     * @param $ehaKod
+     * 
+     * @param
+     *            $ehaKod
      */
-    public function setEhaKodAttribute($ehaKod) {
+    public function setEhaKodAttribute($ehaKod)
+    {
         $this->attributes['eha_kod'] = strtoupper($ehaKod);
     }
 
@@ -104,7 +124,8 @@ class Szemely extends ColladEntity implements UserInterface, RemindableInterface
         return $this->belongsToMany('ColladAPI\\Entities\\Esemeny', 'esemeny_has_szemely', 'szemely_id', 'esemeny_id');
     }
 
-    public function szerepkorok() {
+    public function szerepkorok()
+    {
         return $this->belongsTo('ColladAPI\\Entities\\Szerepkor', 'esemeny_has_szemely', 'szerepkor_id')->withPivot('megjegyzes');
     }
 

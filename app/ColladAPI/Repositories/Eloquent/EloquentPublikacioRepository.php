@@ -4,14 +4,13 @@
  * Date: 10/3/13
  * Time: 11:29 PM
  */
-
 namespace ColladAPI\Repositories\Eloquent;
-
 
 use ColladAPI\Entities\Publikacio;
 use ColladAPI\Repositories\PublikacioRepository;
 
-class EloquentPublikacioRepository implements PublikacioRepository {
+class EloquentPublikacioRepository implements PublikacioRepository
+{
 
     private $publikacio;
 

@@ -54,10 +54,10 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-			'host'      => 'norbertherczeg.me',
+			'host'      => 'localhost',
 			'database'  => 'szakdolgozat',
-			'username'  => 'noherczeg',
-			'password'  => 'n0h3rc23g',
+			'username'  => 'root',
+			'password'  => '',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',

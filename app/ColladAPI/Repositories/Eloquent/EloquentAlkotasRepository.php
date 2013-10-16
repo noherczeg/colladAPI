@@ -4,14 +4,13 @@
  * Date: 10/3/13
  * Time: 11:15 PM
  */
-
 namespace ColladAPI\Repositories\Eloquent;
-
 
 use ColladAPI\Entities\Alkotas;
 use ColladAPI\Repositories\AlkotasRepository;
 
-class EloquentAlkotasRepository implements AlkotasRepository {
+class EloquentAlkotasRepository implements AlkotasRepository
+{
 
     private $alkotas;
 
