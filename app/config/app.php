@@ -54,6 +54,17 @@ return array(
 
 	'locale' => 'hu',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Available languages
+    |--------------------------------------------------------------------------
+    |
+    | This array determines all languages available for use on the site
+    |
+    */
+
+    'available_languages' => array('en', 'hu'),
+
 	/*
 	|--------------------------------------------------------------------------
 	| Encryption Key

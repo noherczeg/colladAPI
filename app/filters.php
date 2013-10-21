@@ -2,24 +2,23 @@
 
 /*
 |--------------------------------------------------------------------------
-| Application & Route Filters
+| HTTP Localization handler
 |--------------------------------------------------------------------------
 |
-| Below you will find the "before" and "after" events for the application
-| which may be used to do any work before or after a request into your
-| application. Here you may also register your custom route filters.
+| Custom handler which observes the HTTP Accept-Language header and if it
+| exists, and contains an available language code, then the app
+| automatically sets it as the locale.
 |
 */
 
 App::before(function($request)
 {
-	//
-});
-
-
-App::after(function($request, $response)
-{
-	//
+    foreach ($request->getLanguages() as $requestLanguage) {
+        if (in_array($requestLanguage, Config::get('app.available_languages'))) {
+            App::setLocale($requestLanguage);
+            break;
+        }
+    }
 });
 
 /*
