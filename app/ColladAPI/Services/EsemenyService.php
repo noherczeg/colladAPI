@@ -11,6 +11,4 @@ use ColladAPI\Services\CRUDService;
 
 interface EsemenyService extends CRUDService {
 
-    public function save(array $esemenyData);
-
 }

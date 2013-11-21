@@ -7,11 +7,8 @@
 
 namespace ColladAPI\Services;
 
-use ColladAPI\Services\CRUDService;
 
 interface SzemelyService extends CRUDService {
-
-    public function findByIdWithDijak($id);
 
     public function register(array $userData);
 

@@ -5,7 +5,8 @@
 	"license": "MIT",
 	"require": {
 		"laravel/framework": "4.0.*",
-        "loic-sharma/profiler": "1.1.*"
+        "zizaco/entrust": "dev-master",
+        "jms/serializer": "0.14.*@dev"
 	},
 	"autoload": {
 		"classmap": [
@@ -28,7 +29,8 @@
 			"php artisan clear-compiled"
 		],
 		"post-update-cmd": [
-			"php artisan optimize"
+			"php artisan optimize",
+            "php artisan debugbar:publish"
 		],
 		"post-create-project-cmd": [
 			"php artisan key:generate"

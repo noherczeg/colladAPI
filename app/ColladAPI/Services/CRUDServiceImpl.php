@@ -12,39 +12,43 @@ use ColladAPI\Repositories\CRUDRepository;
 
 class CRUDServiceImpl implements CRUDService {
 
-    protected $crudRepository;
+    protected $repository;
+
+    protected $pagination = false;
 
     public function __construct(CRUDRepository $crudRepository)
     {
-        $this->crudRepository = $crudRepository;
+        $this->repository = $crudRepository;
     }
 
     public function findById($id)
     {
-        return $this->crudRepository->findById($id);
+        return $this->repository->findById($id);
     }
 
-    public function update($id, array $entityData)
+    public function update(array $entityData)
     {
-        $entity = $this->crudRepository->findById($id);
-        $entity->fill($entityData);
-        $entity->validate();
-
-        if (!$entity->save()) {
-            throw new ErrorMessageException('Hiba az adatok frissítése során');
-            return false;
-        }
-
-        return $entity;
+        return $this->repository->update($entityData);
     }
 
     public function delete($id)
     {
-        return $this->crudRepository->delete($id);
+        return $this->repository->delete($id);
     }
 
     public function all()
     {
-        return $this->crudRepository->all();
+        return $this->repository->all();
+    }
+
+    public function save(array $entityData)
+    {
+        return $this->repository->save($entityData);
+    }
+
+    public function enablePagination($boolValue)
+    {
+        $this->pagination = $boolValue;
+        $this->repository->enablePagination($boolValue);
     }
 }

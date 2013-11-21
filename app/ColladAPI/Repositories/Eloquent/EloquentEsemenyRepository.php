@@ -4,38 +4,28 @@
  * Date: 10/3/13
  * Time: 11:22 PM
  */
+
 namespace ColladAPI\Repositories\Eloquent;
+
 
 use ColladAPI\Entities\Esemeny;
 use ColladAPI\Repositories\EsemenyRepository;
+use ColladAPI\Repositories\Eloquent\EloquentCRUDRepository;
 
-class EloquentEsemenyRepository implements EsemenyRepository
-{
-
-    private $esemeny;
+class EloquentEsemenyRepository extends EloquentCRUDRepository implements EsemenyRepository {
 
     public function __construct(Esemeny $esemeny)
     {
-        $this->esemeny = $esemeny;
+        parent::__construct($esemeny);
     }
 
     public function all()
     {
-        return $this->esemeny->with('tipus', 'szemelyek', 'szemelyek.szerepkor', 'palyazatok', 'otdkdolgozatok', 'karitdkdolgozatok')->get();
+        return $this->entity->with('tipus', 'szemelyek', 'szemelyek.szerepkor', 'palyazatok', 'otdkdolgozatok', 'karitdkdolgozatok')->get();
     }
 
     public function findById($entityId)
     {
-        return $this->esemeny->with('tipus', 'szemelyek', 'szemelyek.szerepkor', 'palyazatok', 'otdkdolgozatok', 'karitdkdolgozatok')->findOrFail($entityId);
-    }
-
-    public function delete($entityId)
-    {
-        return $this->esemeny->destroy($entityId);
-    }
-
-    public function saveOrUpdate(Esemeny $entity)
-    {
-        return $entity->save();
+        return $this->entity->with('tipus', 'szemelyek', 'szemelyek.szerepkor', 'palyazatok', 'otdkdolgozatok', 'karitdkdolgozatok')->findOrFail($entityId);
     }
 }

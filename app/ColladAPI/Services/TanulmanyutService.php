@@ -10,6 +10,4 @@ namespace ColladAPI\Services;
 
 interface TanulmanyutService extends CRUDService {
 
-    public function save(array $tanulmanyutData);
-
 }

@@ -11,6 +11,4 @@ use ColladAPI\Services\CRUDService;
 
 interface PublikacioService extends CRUDService {
 
-    public function save(array $publikacioData);
-
 }

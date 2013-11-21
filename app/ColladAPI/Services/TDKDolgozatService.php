@@ -11,6 +11,4 @@ use ColladAPI\Services\CRUDService;
 
 interface TDKDolgozatService extends CRUDService {
 
-    public function save(array $dolgozatData);
-
 }

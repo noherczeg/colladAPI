@@ -8,30 +8,19 @@
 namespace ColladAPI\Services;
 
 use ColladAPI\Services\AlkotasService;
-use ColladAPI\Entities\Alkotas;
 use ColladAPI\Repositories\AlkotasRepository;
-use ColladAPI\Exceptions\ErrorMessageException;
 use ColladAPI\Services\CRUDServiceImpl;
 
 class AlkotasServiceImpl extends CRUDServiceImpl implements AlkotasService {
 
     public function __construct(AlkotasRepository $alkotasRepository)
     {
-        $this->crudRepository = $alkotasRepository;
+        $this->repository = $alkotasRepository;
     }
-
-    public function save(array $alkotasData)
+    
+    public function allBetweenDates(\DateTime $from, \DateTime $to)
     {
-        $alkotas = new Alkotas();
-        $alkotas->fill($alkotasData);
-        $alkotas->validate();
-
-        if (!$alkotas->save()) {
-            throw new ErrorMessageException('Hiba az adatok felvitele során');
-            return false;
-        }
-
-        return $alkotas;
+        return $this->repository->allBetweenDates($from, $to);
     }
 
 }

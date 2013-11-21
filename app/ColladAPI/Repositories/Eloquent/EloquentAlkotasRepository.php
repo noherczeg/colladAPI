@@ -4,38 +4,34 @@
  * Date: 10/3/13
  * Time: 11:15 PM
  */
+
 namespace ColladAPI\Repositories\Eloquent;
+
 
 use ColladAPI\Entities\Alkotas;
 use ColladAPI\Repositories\AlkotasRepository;
+use ColladAPI\Repositories\Eloquent\EloquentCRUDRepository;
 
-class EloquentAlkotasRepository implements AlkotasRepository
+class EloquentAlkotasRepository extends EloquentCRUDRepository implements AlkotasRepository
 {
-
-    private $alkotas;
 
     public function __construct(Alkotas $alkotas)
     {
-        $this->alkotas = $alkotas;
-    }
-
-    public function saveOrUpdate(Alkotas $entity)
-    {
-        return $entity->save();
+        parent::__construct($alkotas);
     }
 
     public function all()
     {
-        return $this->alkotas->with('tipus', 'palyazatok')->get();
+        return $this->entity->with('tipus')->get();
+    }
+
+    public function allBetweenDates(\DateTime $from, \DateTime $to)
+    {
+        return $this->entity->where('datum', '>=', $from->format('Y-m-d'))->where('datum', '<=', $to->format('Y-m-d'))->with('palyazatok', 'szemelyek')->get();
     }
 
     public function findById($entityId)
     {
-        return $this->alkotas->with('tipus', 'palyazatok')->findOrFail($entityId);
-    }
-
-    public function delete($entityId)
-    {
-        return $this->alkotas->destroy($entityId);
+        return $this->entity->with('palyazatok')->findOrFail($entityId);
     }
 }

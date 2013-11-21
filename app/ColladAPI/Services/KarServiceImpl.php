@@ -16,30 +16,16 @@ class KarServiceImpl extends CRUDServiceImpl implements KarService {
 
     public function __construct(KarRepository $karRepository)
     {
-        $this->crudRepository = $karRepository;
-    }
-
-    public function save(array $karData)
-    {
-        $kar = new Kar();
-        $kar->fill($karData);
-        $kar->validate();
-
-        if (!$kar->save()) {
-            throw new ErrorMessageException('Hiba az adatok felvitele során');
-            return false;
-        }
-
-        return $kar;
+        $this->repository = $karRepository;
     }
 
     public function szemelyekByIdAndDate($karId, \DateTime $idopont)
     {
-        return $this->crudRepository->szemelyekByIdAndDate($karId, $idopont);
+        return $this->repository->szemelyekByIdAndDate($karId, $idopont);
     }
 
     public function intezetekAndTanszekekByIdAndDate($karId, \DateTime $idopont)
     {
-        return $this->crudRepository->intezetekAndTanszekekByIdAndDate($karId, $idopont);
+        return $this->repository->intezetekAndTanszekekByIdAndDate($karId, $idopont);
     }
 }

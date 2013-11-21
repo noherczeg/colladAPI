@@ -4,24 +4,16 @@
  * Date: 9/26/13
  * Time: 1:43 AM
  */
+
 namespace ColladAPI\Entities;
 
 use ColladAPI\Entities\ColladEntity;
 
-class Fokozat extends ColladEntity
-{
+class Fokozat extends ColladEntity {
 
     protected $table = "fokozat";
 
-    protected $fillable = [
-        'szemely_id',
-        'fokozat_tipus_id',
-        'tudomanyterulet_id',
-        'dolgozat_cime',
-        'datum',
-        'intezmeny',
-        'megjegyzes'
-    ];
+    protected $fillable = ['szemely_id', 'fokozat_tipus_id', 'tudomanyterulet_id', 'dolgozat_cime', 'datum', 'intezmeny', 'megjegyzes'];
 
     protected $rules = [
         'dolgozat_cime' => 'required|alpha_num|between:2,256',
@@ -30,23 +22,20 @@ class Fokozat extends ColladEntity
         'megjegyzes' => 'max:512'
     ];
 
-    public function szemely()
-    {
+    public function szemely() {
         return $this->belongsTo('ColladAPI\\Entities\\Szemely');
     }
 
-    public function tipus()
-    {
+    public function tipus() {
         return $this->belongsTo('ColladAPI\\Entities\\FokozatTipus');
     }
 
-    public function tudomanyTerulet()
-    {
+    public function tudomanyTerulet() {
         return $this->belongsTo('ColladAPI\\Entities\\TudomanyTerulet');
     }
 
-    public function supervisedBySzemely()
-    {
+    public function supervisedBySzemely() {
         return $this->belongsToMany('ColladAPI\\Entities\\Szemely', 'szemely_supervise_fokozat', 'fokozat_id', 'szemely_id');
     }
+
 }

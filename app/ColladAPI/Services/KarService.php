@@ -11,8 +11,6 @@ use ColladAPI\Services\CRUDService;
 
 interface KarService extends CRUDService {
 
-    public function save(array $karData);
-
     public function szemelyekByIdAndDate($karId, \DateTime $idopont);
 
     public function intezetekAndTanszekekByIdAndDate($karId, \DateTime $idopont);

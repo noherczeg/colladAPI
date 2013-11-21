@@ -11,8 +11,6 @@ use ColladAPI\Services\CRUDService;
 
 interface TanszekService extends CRUDService {
 
-    public function save(array $tanszekData);
-
     public function szemelyekByDate($tanszekId, \DateTime $date);
 
 }

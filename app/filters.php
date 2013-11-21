@@ -1,5 +1,7 @@
 <?php
 
+use \ColladAPI\Entities\Szemely;
+
 /*
 |--------------------------------------------------------------------------
 | HTTP Localization handler
@@ -41,6 +43,28 @@ Route::filter('auth', function()
 Route::filter('auth.basic', function()
 {
 	return Auth::basic();
+});
+
+Route::filter('basic.once', function()
+{
+    return Auth::onceBasic();
+});
+
+Route::filter('api.auth', function()
+{
+    if (!Request::getUser())
+    {
+        App::abort(401, 'A valid API key is required');
+    }
+
+    $user = Szemely::where('api_kulcs', '=', Request::getUser())->first();
+
+    if (!$user)
+    {
+        App::abort(401);
+    }
+
+    Auth::login($user);
 });
 
 /*

@@ -11,6 +11,4 @@ use ColladAPI\Services\CRUDService;
 
 interface PalyazatService extends CRUDService {
 
-    public function save(array $palyazatData);
-
 }

@@ -11,6 +11,4 @@ use ColladAPI\Services\CRUDService;
 
 interface DijService extends CRUDService {
 
-    public function save(array $dijData);
-
 }

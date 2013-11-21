@@ -11,6 +11,6 @@ use ColladAPI\Services\CRUDService;
 
 interface AlkotasService extends CRUDService {
 
-    public function save(array $alkotasData);
+    public function allBetweenDates(\DateTime $from, \DateTime $to);
 
 }

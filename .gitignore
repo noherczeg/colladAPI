@@ -1,5 +1,6 @@
 /bootstrap/compiled.php
 /vendor
+/workbench
 /app/config/app.php
 /app/config/database.php
 /app/config/mail.php
@@ -7,6 +8,3 @@
 composer.phar
 composer.lock
 .DS_Store
-.project
-.settings
-.buildpath

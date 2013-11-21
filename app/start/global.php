@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\App;
 /*
 |--------------------------------------------------------------------------
 | Register The Laravel Class Loader
@@ -31,9 +32,26 @@ ClassLoader::addDirectories(array(
 |
 */
 
-$logFile = 'log-'.php_sapi_name().'.txt';
+//$logFile = 'log-'.php_sapi_name().'.txt';
+//Log::useDailyFiles(storage_path().'/logs/'.$logFile);
 
-Log::useDailyFiles(storage_path().'/logs/'.$logFile);
+Log::listen(function($level, $message, $context) {
+
+    // Save the php sapi and date, because the closure needs to be serialized
+    $apiName = php_sapi_name();
+    $date = new DateTime;
+
+    Queue::push(function() use ($level, $message, $context, $apiName, $date) {
+        DB::insert("INSERT INTO log (php_sapi_name, level, message, context, created_at) VALUES (?, ?, ?, ?, ?)", array(
+            $apiName,
+            $level,
+            $message,
+            json_encode($context),
+            $date
+        ));
+    });
+
+});
 
 /*
 |--------------------------------------------------------------------------

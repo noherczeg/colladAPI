@@ -4,19 +4,19 @@
  * Date: 10/3/13
  * Time: 11:12 PM
  */
+
 namespace ColladAPI\Repositories\Eloquent;
+
 
 use ColladAPI\Entities\Tanulmanyut;
 use ColladAPI\Repositories\TanulmanyutRepository;
+use ColladAPI\Repositories\Eloquent\EloquentCRUDRepository;
 
-class EloquentTanulmanyutRepository implements TanulmanyutRepository
-{
-
-    private $tanulmanyut;
+class EloquentTanulmanyutRepository extends EloquentCRUDRepository implements TanulmanyutRepository {
 
     public function __construct(Tanulmanyut $tanulmanyut)
     {
-        $this->tanulmanyut = $tanulmanyut;
+        $this->entity = $tanulmanyut;
     }
 
     public function all()
@@ -29,13 +29,4 @@ class EloquentTanulmanyutRepository implements TanulmanyutRepository
         return $this->tanulmanyut->with('tipus', 'orszag')->findOrFail($entityId);
     }
 
-    public function delete($entityId)
-    {
-        return $this->tanulmanyut->destroy($entityId);
-    }
-
-    public function saveOrUpdate(Tanulmanyut $entity)
-    {
-        $entity->save();
-    }
 }
