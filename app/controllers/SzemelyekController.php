@@ -93,13 +93,12 @@ class SzemelyekController extends BaseController {
 	 */
 	public function show($id)
     {
+        $this->enableLinks(true);
         $this->allowForRoles('only', ['Admin']);
-        $szemely = $this->service->findById($id);
 
-        if ($szemely == null)
-            return Response::json(['reason' => 'not found'], 404);
+        $resource = $this->createResource($this->service->findById($id));
 
-        return Response::json($szemely, 200);
+        return $this->sendResource($resource);
 	}
 
 	/**

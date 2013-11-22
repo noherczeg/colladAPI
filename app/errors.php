@@ -17,9 +17,8 @@ App::error(function(Exception $exception, $code) {
 
 App::error(function(Symfony\Component\HttpKernel\Exception\HttpException $e, $code) {
     $headers = $e->getHeaders();
-    $content = ["content" => null, "_links" => [
+    $content = ["content" => null, "links" => [
         ["rel" => "self", "href" => URL::full()],
-        ["rel" => "login", "href" => "/login"]
     ]];
 
     switch ($code)

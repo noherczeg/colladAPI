@@ -15,6 +15,7 @@ class TanszekekController extends BaseController {
 
     public function __construct(TanszekService $tanszekService)
     {
+        parent::__construct();
         $this->tanszekService = $tanszekService;
     }
 
@@ -25,7 +26,11 @@ class TanszekekController extends BaseController {
      */
     public function index()
     {
-        return Response::json($this->tanszekService->all());
+        $this->enableLinks(true);
+
+        $resource = $this->createResource($this->tanszekService->all());
+
+        return $this->sendResource($resource);
     }
 
     /**
@@ -63,18 +68,18 @@ class TanszekekController extends BaseController {
      */
     public function show($id)
     {
-        $tanszek = null;
+        $this->enableLinks(true);
+
+        $resource = null;
 
         if (!is_null(Request::query('date'))) {
-            $tanszek = $this->tanszekService->szemelyekByDate($id, new DateTime(Request::query('date')));
+            $resource = $this->createResource($this->tanszekService->szemelyekByDate($id, new DateTime(Request::query('date'))));
         } else {
-            $tanszek = $this->tanszekService->findById($id);
+            $resource = $this->createResource($this->tanszekService->findById($id));
         }
 
-        if ($tanszek == null)
-            return Response::json(['reason' => 'not found'], 404);
 
-        return Response::json($tanszek, 200);
+        return $this->sendResource($resource);
     }
 
     /**

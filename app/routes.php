@@ -76,6 +76,7 @@ Route::group(array('prefix' => 'v1', 'before' => 'api.auth'), function()
 {
     Route::resource('szemelyek', 'SzemelyekController');
     Route::resource('palyazatok', 'PalyazatokController');
+    Route::resource('tanszekek', 'TanszekekController');
     Route::resource('szemelyek.tanszekek', 'TanszekekController');
     Route::resource('tanulmanyutak', 'TanulmanyutakController');
     Route::resource('tdkdolgozatok', 'TDKDolgozatokController');
