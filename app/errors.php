@@ -66,3 +66,13 @@ App::error(function(ModelNotFoundException $e)
 {
     return Response::json(['reason' => 'a kért erőforrás nem található'], 404);
 });
+
+App::error(function(\Predis\Connection\ConnectionException $e)
+{
+    return Response::json(['reason' => 'a Cache szerver nem válaszol'], 500);
+});
+
+App::error(function(\Doctrine\DBAL\ConnectionException $e)
+{
+    return Response::json(['reason' => 'az adatbázis szerver nem válaszol'], 500);
+});

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Request;
 use ColladAPI\MediaType;
 use ColladAPI\Providers\Serializer;
 use Noherczeg\RestExt\Providers\HttpStatus;
+use ColladAPI\Resource;
 
 class BaseController extends Controller
 {
@@ -28,11 +29,11 @@ class BaseController extends Controller
 
     protected $charset = null;
 
-    private $response = null;
-
     protected $route = null;
 
     private $supportedMediaTypes = [MediaType::APPLICATION_JSON, MediaType::APPLICATION_XML];
+
+    private $ACCEPT_WILDCARD = '*/*';
 
     public function __construct()
     {
@@ -45,36 +46,6 @@ class BaseController extends Controller
         if ($this->charset == null)
             $this->charset = Config::get('rest.charset');
 
-        $this->afterFilter(function()
-        {
-            $data  = $this->resource->toArray();
-
-            if ($this->links) {
-
-                // onmagara mutato link
-                $this->createLink('self', URL::full());
-
-                if ($this->pagination) {
-                    $this->resource->links();
-
-                    $this->response['content'] = $data['data'];
-
-                    // lapozashoz linkek
-                    $this->generatePaginationLinks();
-
-                    // page metainfo
-                    $this->generatePaginationMetaInfo();
-                } else {
-                    // maga a tartalom mely visszakuldesre kerul
-                    $this->response['content'] = $data;
-                }
-            } else {
-                $this->response = $data;
-            }
-
-            // send response with appropriate headers depending on request, content type from settings, media type from settings
-            return $this->sendResponse()->send();
-        });
     }
 
     public function getSupportedMediaTypes()
@@ -138,73 +109,131 @@ class BaseController extends Controller
         $this->service->enablePagination($boolOrInt);
     }
 
+    /**
+     * Enables linking for a returned Resource.
+     *
+     * Can be called anywhere (constructor, method)
+     *
+     * @param boolean $boolValue
+     * @throws InvalidArgumentException
+     */
     protected function enableLinks($boolValue)
     {
         if(!is_bool($boolValue))
-            // TODO nyelvesites..
             throw new \InvalidArgumentException('Expecting boolean value!');
         $this->links = $boolValue;
     }
 
+    /**
+     * Overrides the returned MediaType of our Resource
+     *
+     * @param string $mt
+     */
     protected function setMediaType($mt)
     {
         $this->media_type = $mt;
     }
 
+    /**
+     * Overrides the default character set of our responses
+     *
+     * @param string $cs
+     */
     protected function setCharset($cs)
     {
         $this->charset = $cs;
     }
 
+    /**
+     * Helper method to assemble an easily processable link array.
+     *
+     * @param string $rel
+     * @param string $href
+     * @return array
+     */
     protected function createLink($rel, $href) {
-        $this->response['links'][] = ['rel' => $rel, 'href' => $href];
+        return ['rel' => $rel, 'href' => $href];
     }
 
-    private function generatePaginationMetaInfo()
+    /**
+     * Creates an array of meta information for pagination
+     *
+     * @param $paginationObject
+     * @return array
+     */
+    private function generatePaginationMetaInfo($paginationObject)
     {
-        $this->response['pages'] = [
-            'total' => $this->resource->getTotal(), 'perPage' => $this->resource->getPerPage(),
-            'isFirstPage' => ($this->resource->getCurrentPage() == 1) ? true : false,
-            'isLastPage' => ($this->resource->getCurrentPage() == $this->resource->getLastPage()) ? true : false
+        return [
+            'total' => $paginationObject->getTotal(), 'perPage' => $paginationObject->getPerPage(),
+            'isFirstPage' => ($paginationObject->getCurrentPage() == 1) ? true : false,
+            'isLastPage' => ($paginationObject->getCurrentPage() == $paginationObject->getLastPage()) ? true : false
         ];
     }
 
-    private function generatePaginationLinks()
+    /**
+     * Intelligently creates pagination links for our Resource from the raw Pagination object
+     *
+     * @param $paginationObject
+     * @return array
+     */
+    private function generatePaginationLinks($paginationObject)
     {
+        $links = [];
         // legelso oldalra mutato link
-        $this->createLink('first', URL::to($this->route . '?page=1'));
+        $links[] = $this->createLink('first', URL::to($this->route . '?page=1'));
 
         // elozo oldalra mutato link, ha van
-        if ($this->resource->getCurrentPage() > 1)
-            $this->createLink('previous', URL::to($this->route . '?page=' . ($this->resource->getCurrentPage() - 1)));
+        if ($paginationObject->getCurrentPage() > 1)
+            $links[] = $this->createLink('previous', URL::to($this->route . '?page=' . ($paginationObject->getCurrentPage() - 1)));
 
         // kovetkezo oldalra mutato link, ha van
-        if ($this->resource->getCurrentPage() < $this->resource->getLastPage())
-            $this->createLink('next', URL::to($this->route . '?page=' . ($this->resource->getCurrentPage() + 1)));
+        if ($paginationObject->getCurrentPage() < $paginationObject->getLastPage())
+            $links[] = $this->createLink('next', URL::to($this->route . '?page=' . ($paginationObject->getCurrentPage() + 1)));
 
         // utolso elemre mutato link
-        $this->createLink('last', URL::to($this->route . '?page=' . $this->resource->getLastPage()));
+        $links[] = $this->createLink('last', URL::to($this->route . '?page=' . $paginationObject->getLastPage()));
+
+        return $links;
     }
 
-    public function sendResponse()
+    /**
+     * Creates a Response object filled with the content and meta info of the Resource which is returned
+     *
+     * @param ColladAPI\Resource $fromResource
+     * @return \Illuminate\Http\Response
+     */
+    public function sendResource(Resource $fromResource)
     {
-        $response = Response::make($this->createResponseBody($this->response), $this->createResponseCode());
+        $response = Response::make($this->createResponseBody($fromResource), $this->createResponseCode());
         $response->setCharset($this->charset);
         $response->header('Content-Type', $this->createContentType($this->media_type, $this->charset));
 
         return $response;
     }
 
+    /**
+     * Wrapper function to create a complete Content Type Header
+     *
+     * @param string $media_type
+     * @param string $charset
+     * @return string
+     */
     private function createContentType($media_type, $charset)
     {
         return $this->assembleMediaType($media_type) . '; ' . 'charset=' . $charset;
     }
 
+    /**
+     * Returns a MediaType after evaluating the context's settings
+     *
+     * @param $media_type
+     * @return string
+     */
     private function assembleMediaType($media_type)
     {
         $finalType = $media_type;
 
-        if (Config::get('rest.prefer_accept') && count(Request::getAcceptableContentTypes()) > 0) {
+        if (Config::get('rest.prefer_accept') && count(Request::getAcceptableContentTypes()) > 0 && !in_array($this->ACCEPT_WILDCARD, Request::getAcceptableContentTypes())) {
             foreach(Request::getAcceptableContentTypes() as $acceptType) {
                 if (in_array($acceptType, $this->getSupportedMediaTypes())) {
                     $finalType = Request::getAcceptableContentTypes()[0];
@@ -216,6 +245,12 @@ class BaseController extends Controller
         return $finalType;
     }
 
+    /**
+     * Creates a Response code when working with a Resource which is aware of the Request's method type so this can
+     * be used to replace some boilerplate code when trying to decide what to set at what scenario.
+     *
+     * @return int
+     */
     private function createResponseCode()
     {
         $code = HttpStatus::OK;
@@ -229,6 +264,12 @@ class BaseController extends Controller
         return $code;
     }
 
+    /**
+     * Creates MediaType-aware content from raw data
+     *
+     * @param mixed $data
+     * @return string
+     */
     private function createResponseBody($data)
     {
         $mediaType = $this->assembleMediaType($this->media_type);
@@ -277,6 +318,41 @@ class BaseController extends Controller
             return Request::query('page');
         else
             return false;
+    }
+
+    /**
+     * @param mixed $rawResource
+     * @return Resource
+     */
+    public function createResource($rawResource)
+    {
+        $resource = new Resource();
+        $data  = $rawResource->toArray();
+
+        if ($this->links) {
+
+            // onmagara mutato link
+            $resource->addLink($this->createLink('self', URL::full()));
+
+            if ($this->pagination) {
+                $rawResource->links();
+
+                $resource->setContent($data['data']);
+
+                // lapozashoz linkek
+                $resource->addLinks($this->generatePaginationLinks($rawResource));
+
+                // page metainfo
+                $resource->setPagesMeta($this->generatePaginationMetaInfo($rawResource));
+            } else {
+                // maga a tartalom mely visszakuldesre kerul
+                $resource->setContent($data);
+            }
+        } else {
+            $resource->setContent($data);
+        }
+
+        return $resource;
     }
 
 }

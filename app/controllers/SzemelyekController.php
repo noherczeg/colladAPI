@@ -6,14 +6,15 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Request;
 use ColladAPI\MediaType;
 use ColladAPI\Charset;
+use ColladAPI\Resource;
 
 class SzemelyekController extends BaseController {
 
     protected $szemelyService;
 
-    private $cacheTimeMinutes = 5;
+    protected $cacheTimeMinutes = 5;
 
-    //protected $media_type = MediaType::APPLICATION_JSON;
+    protected $media_type = MediaType::APPLICATION_JSON;
 
     //protected $charset = Charset::ISO_8859_2;
 
@@ -23,11 +24,6 @@ class SzemelyekController extends BaseController {
         $this->service = $szemelyService;
         //$this->setPagination(2);
         //$this->allowForRoles('only', ['ADMIN']);
-    }
-
-    public function getSearch()
-    {
-        dd($asd);
     }
 
 	/**
@@ -52,14 +48,14 @@ class SzemelyekController extends BaseController {
         //$this->setMediaType(MediaType::APPLICATION_XML);
         $this->enableLinks(true);
 
-        $osszesSzemely = Cache::remember('osszesSzemely', $this->cacheTimeMinutes, function()
+        /*$resource = Cache::remember('osszesSzemely', $this->cacheTimeMinutes, function()
         {
-            return $this->service->all();
-        });
-
-        $this->resource = $osszesSzemely;
-
+            return $this->createResource($this->service->all());
+        });*/
+        $resource = $this->createResource($this->service->all());
         Log::info("test logolas", array('context' => 'Other helpful information'));
+
+        return $this->sendResource($resource);
 	}
 
 	/**
