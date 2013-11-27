@@ -151,8 +151,14 @@ class BaseController extends Controller
      * @param string $href
      * @return array
      */
-    protected function createLink($rel, $href) {
-        return ['rel' => $rel, 'href' => $href];
+    protected function createLink($rel, $href = null) {
+        $url = ($href === null) ? URL::to(Request::url() . '/' . strtolower($rel)) : $href;
+        return ['rel' => $rel, 'href' => $url];
+    }
+
+    protected function createLinkToFirstPage($rel) {
+        $url = URL::to(Request::url() . '/' . strtolower($rel) . '?page=1');
+        return ['rel' => $rel, 'href' => $url];
     }
 
     /**
@@ -322,22 +328,24 @@ class BaseController extends Controller
 
     /**
      * @param mixed $rawResource
+     * @param bool $withContentSelfLink
      * @return Resource
      */
-    public function createResource($rawResource)
+    public function createResource($rawResource, $withContentSelfLink = false)
     {
         $resource = new Resource();
         $data  = $rawResource->toArray();
+        $contentCollection = null;
 
         if ($this->links) {
 
             // onmagara mutato link
-            $resource->addLink($this->createLink('self', URL::full()));
+            $resource->addLink($this->createSelfLink());
 
             if ($this->pagination) {
                 $rawResource->links();
 
-                $resource->setContent($data['data']);
+                $contentCollection = $data['data'];
 
                 // lapozashoz linkek
                 $resource->addLinks($this->generatePaginationLinks($rawResource));
@@ -346,8 +354,17 @@ class BaseController extends Controller
                 $resource->setPagesMeta($this->generatePaginationMetaInfo($rawResource));
             } else {
                 // maga a tartalom mely visszakuldesre kerul
-                $resource->setContent($data);
+                $contentCollection = $data;
             }
+
+            // ha van engedelyezve a tartalmi reszehez a Resourcenak self link generalas
+            if ($withContentSelfLink) {
+                foreach ($contentCollection as $key => $resourceCandidate) {
+                    $contentCollection[$key]['links'][] = ['self' => Request::url() . '/' . $resourceCandidate['id']];
+                }
+            }
+
+            $resource->setContent($contentCollection);
         } else {
             $resource->setContent($data);
         }
@@ -355,4 +372,48 @@ class BaseController extends Controller
         return $resource;
     }
 
+    /**
+     * Creates Links to all of the provided Model's relations
+     *
+     * Keep in mind that relations may only be scanned after they are attached to a certain Model, which means "join"
+     * operation(s) where triggered. For example: with() method was called on the Model with params!
+     *
+     * @param $ent
+     * @return array
+     */
+    protected function linksToEntityRelations($ent)
+    {
+        $rels = array_keys($ent->getRelations());
+        $links = [];
+
+        foreach ($rels as $rel) {
+            $links[] = $this->createLink(ucfirst($rel), Request::url() . '/' . $rel);
+        }
+
+        return $links;
+    }
+
+    /**
+     * Creates a parent Link to a Resource or Resource Collection
+     *
+     * @param $parentResource      The name of the parent Resource
+     * @return array
+     */
+    protected function createParentLink($parentResource = null)
+    {
+        $original = Request::url();
+        $parentName = ($parentResource === null) ? 'parent' : $parentResource;
+        return $this->createLink($parentName, substr($original, 0, strrpos($original, '/')));
+    }
+
+    /**
+     * Created self links to the currently called Resource with, or without the provided Query Strings.
+     *
+     * @param bool $withQueryStrings    Decides if Query Strings should be attached as well, or not
+     * @return array
+     */
+    public function createSelfLink($withQueryStrings = false)
+    {
+        return $this->createLink('self', ($withQueryStrings) ? URL::full() : Request::url());
+    }
 }
