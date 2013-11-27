@@ -13,9 +13,9 @@ class Resource {
 
     private $links = [];
     private $content = null;
-    private $pagesMeta = [];
+    private $pagesMeta = null;
 
-    public function __construct(array $links = [], $content = null, array $pagesMeta = [])
+    public function __construct(array $links = [], $content = null, array $pagesMeta = null)
     {
         $this->links = $links;
         $this->content = $content;

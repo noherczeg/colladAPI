@@ -7,7 +7,6 @@
 
 namespace ColladAPI\Entities;
 
-use ColladAPI\Entities\ColladEntity;
 
 class Szak extends ColladEntity {
 

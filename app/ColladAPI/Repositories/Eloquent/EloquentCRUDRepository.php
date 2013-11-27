@@ -6,7 +6,6 @@ namespace ColladAPI\Repositories\Eloquent;
 use ColladAPI\Entities\ColladEntity;
 use ColladAPI\Exceptions\NotFoundException;
 use ColladAPI\Repositories\CRUDRepository;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Config;
 
 class EloquentCRUDRepository implements CRUDRepository
@@ -109,11 +108,11 @@ class EloquentCRUDRepository implements CRUDRepository
     /**
      * Visszater vagy lapozhato, vagy normal Collectionnel. Amennyiben nem
      *
-     * @param Builder $entity
-     * @return array|\Illuminate\Database\Eloquent\Collection|\Illuminate\Pagination\Paginator|static[]
+     * @param \Illuminate\Database\Eloquent\Builder $entity
+     * @return array|\Illuminate\Database\Eloquent\Collection|\Illuminate\Pagination\Paginator|static[]|\Illuminate\Database\Eloquent\Builder
      * @throws NotFoundException
      */
-    public function restCollection(Builder $entity)
+    public function restCollection($entity)
     {
         $collection = [];
 
@@ -123,8 +122,8 @@ class EloquentCRUDRepository implements CRUDRepository
             $collection = $entity->paginate($this->pagination);
         }
 
-        if (count($collection) == 0 && Config::get('rest.out_of_bounds_exception'))
-            throw new NotFoundException;
+        /*if (count($collection) == 0 && Config::get('rest.out_of_bounds_exception'))
+            throw new NotFoundException;*/
 
         return $collection;
     }

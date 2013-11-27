@@ -7,8 +7,6 @@
 
 namespace ColladAPI\Entities;
 
-use ColladAPI\Entities\ColladEntity;
-
 class EsemenySzerepkor extends ColladEntity {
 
     protected $table = "esemeny_szerepkor";

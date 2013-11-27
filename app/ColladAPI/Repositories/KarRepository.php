@@ -7,8 +7,6 @@
 
 namespace ColladAPI\Repositories;
 
-use ColladAPI\Repositories\CRUDRepository;
-
 interface KarRepository extends CRUDRepository {
 
     public function szemelyekByIdAndDate($karId, \DateTime $idopont);

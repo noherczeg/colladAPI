@@ -5,7 +5,6 @@ use ColladAPI\Exceptions\ErrorMessageException;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Request;
 use ColladAPI\MediaType;
-use ColladAPI\Charset;
 use ColladAPI\Resource;
 
 class SzemelyekController extends BaseController {
@@ -52,20 +51,26 @@ class SzemelyekController extends BaseController {
         {
             return $this->createResource($this->service->all());
         });*/
-        $resource = $this->createResource($this->service->all());
-        Log::info("test logolas", array('context' => 'Other helpful information'));
+
+        $resource = new Resource();
+        $atTime = new \DateTime(Request::query('in'));
+        if ($atTime === null) {
+            $atTime = new \DateTime();
+        }
+
+        if (Request::query('type') == 'tanar') {
+            $resource = $this->createResource($this->service->findTanarokAtTime($atTime));
+        } elseif (Request::query('type') == 'hallgato') {
+            $resource = $this->createResource($this->service->findHallgatokAtTime($atTime));
+        } else {
+            $resource = $this->createResource($this->service->all(), true);
+        }
+
+        $resource->addLink($this->createParentLink());
+
+        //Log::info("test logolas", array('context' => 'Other helpful information'));
 
         return $this->sendResource($resource);
-	}
-
-	/**
-	 * Show the form for creating a new resource.
-	 *
-	 * @return Response
-	 */
-	public function create()
-    {
-		//
 	}
 
 	/**
@@ -94,22 +99,14 @@ class SzemelyekController extends BaseController {
 	public function show($id)
     {
         $this->enableLinks(true);
-        $this->allowForRoles('only', ['Admin']);
+        //$this->allowForRoles('only', ['Admin']);
 
-        $resource = $this->createResource($this->service->findById($id));
+        $szemely = $this->service->findByIdWithAll($id);
+
+        $resource = $this->createResource($szemely);
+        $resource->addLinks($this->linksToEntityRelations($szemely));
 
         return $this->sendResource($resource);
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function edit($id)
-    {
-		//
 	}
 
 	/**
@@ -136,7 +133,7 @@ class SzemelyekController extends BaseController {
 	 */
 	public function destroy($id)
     {
-		//
+		$this->service->delete($id);
 	}
 
 }

@@ -125,7 +125,7 @@ class Szemely extends ColladEntity implements UserInterface, RemindableInterface
 
     public function fokozatok()
     {
-        return $this->hasMany('ColladAPI\\Entities\\Fokozat', 'szemely_id');
+        return $this->belongsToMany('ColladAPI\\Entities\\Fokozat', 'szemely_has_fokozat', 'szemely_id', 'fokozat_id')->withPivot('dolgozat_cime', 'datum', 'intezmeny', 'megjegyzes');
     }
 
     public function intezmenyek()
@@ -195,5 +195,59 @@ class Szemely extends ColladEntity implements UserInterface, RemindableInterface
     public function roles()
     {
         return $this->belongsToMany('ColladAPI\\Entities\\Role', 'szemely_has_szerepkor', 'szemely_id', 'szerepkor_id');
+    }
+
+    /**
+     * Scope metodus az entitas osszes relaciojanak "felcsatolasara"
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function scopeWithAll($query)
+    {
+        return $query->with('dijak', 'alkotasok', 'alkotasok.tipus', 'szervezetek', 'roles', 'nyelvtudasok', 'dijak',
+            'fokozatok', 'intezmenyek', 'tanszekek', 'publikaciok', 'tanulmanyutak', 'palyazatok'
+        );
+    }
+
+    /**
+     * Tanar filter
+     *
+     * Ha csak egy datum van megadva, akkor kikeresi azokat a szemelyeket, melyek abban az idopontban rendelkeztek
+     * tanari szerepkorrel.
+     *
+     * Ha mindket parameter meg van adva, akkor a kezdo datum es a veg datum kozott
+     *
+     * TODO orWhere ellenorzes
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function scopeTanar($query)
+    {
+        return $query->has('tanszekek');
+    }
+
+    /**
+     * Hallgato filter (hasonlo a felettihez)
+     *
+     * TODO orWhere ellenorzes
+     *
+     * @param $query
+     * @return mixed
+     */
+    public function scopeHallgato($query)
+    {
+        return $query->has('szakok');
+    }
+
+    public function scopeTanarHallgatoAt($query, \DateTime $atTime)
+    {
+        return $query->where('kezdo_datum', '<=', $atTime->format('Y-m-d'))->orWhere('vege_datum', '>=', $atTime->format('Y-m-d'));
+    }
+
+    public function scopeTanarHallgatoBetween($query, \DateTime $fromTime, \DateTime $toTime)
+    {
+        return $query->where('kezdo_datum', '>=', $fromTime->format('Y-m-d'))->orWhere('vege_datum', '<=', $toTime->format('Y-m-d'));
     }
 }

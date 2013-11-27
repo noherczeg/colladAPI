@@ -7,8 +7,6 @@
 
 namespace ColladAPI\Repositories;
 
-use ColladAPI\Repositories\CRUDRepository;
-
 interface DijRepository extends CRUDRepository {
 
 }

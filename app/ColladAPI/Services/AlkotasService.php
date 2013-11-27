@@ -7,7 +7,6 @@
 
 namespace ColladAPI\Services;
 
-use ColladAPI\Services\CRUDService;
 
 interface AlkotasService extends CRUDService {
 

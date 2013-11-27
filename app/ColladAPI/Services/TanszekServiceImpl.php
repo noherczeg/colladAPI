@@ -7,9 +7,7 @@
 
 namespace ColladAPI\Services;
 
-use ColladAPI\Services\TanszekService;
 use ColladAPI\Repositories\TanszekRepository;
-use ColladAPI\Services\CRUDServiceImpl;
 
 class TanszekServiceImpl extends CRUDServiceImpl implements TanszekService {
 
@@ -18,8 +16,8 @@ class TanszekServiceImpl extends CRUDServiceImpl implements TanszekService {
         $this->repository = $tanszekRepository;
     }
 
-    public function szemelyekByDate($tanszekId, \DateTime $date)
+    public function allForSzemely($id)
     {
-        return $this->repository->szemelyekByDate($tanszekId, $date);
+        return $this->repository->allForSzemely($id);
     }
 }

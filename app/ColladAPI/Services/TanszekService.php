@@ -7,10 +7,9 @@
 
 namespace ColladAPI\Services;
 
-use ColladAPI\Services\CRUDService;
 
 interface TanszekService extends CRUDService {
 
-    public function szemelyekByDate($tanszekId, \DateTime $date);
+    public function allForSzemely($id);
 
 }

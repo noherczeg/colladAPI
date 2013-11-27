@@ -7,8 +7,6 @@
 
 namespace ColladAPI\Repositories;
 
-use ColladAPI\Repositories\CRUDRepository;
-
 interface EsemenyRepository extends CRUDRepository {
 
 }

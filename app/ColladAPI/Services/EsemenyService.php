@@ -7,7 +7,6 @@
 
 namespace ColladAPI\Services;
 
-use ColladAPI\Services\CRUDService;
 
 interface EsemenyService extends CRUDService {
 

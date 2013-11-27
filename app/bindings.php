@@ -12,6 +12,9 @@ App::bind('ColladAPI\Repositories\KarRepository', 'ColladAPI\Repositories\Eloque
 App::bind('ColladAPI\Repositories\PublikacioRepository', 'ColladAPI\Repositories\Eloquent\EloquentPublikacioRepository');
 App::bind('ColladAPI\Repositories\TanulmanyutRepository', 'ColladAPI\Repositories\Eloquent\EloquentTanulmanyutRepository');
 App::bind('ColladAPI\Repositories\TDKDolgozatRepository', 'ColladAPI\Repositories\Eloquent\EloquentTDKDolgozatRepository');
+App::bind('ColladAPI\Repositories\NyelvRepository', 'ColladAPI\Repositories\Eloquent\EloquentNyelvRepository');
+App::bind('ColladAPI\Repositories\SzerepkorRepository', 'ColladAPI\Repositories\Eloquent\EloquentSzerepkorRepository');
+App::bind('ColladAPI\Repositories\FokozatRepository', 'ColladAPI\Repositories\Eloquent\EloquentFokozatRepository');
 
 /** Servicek */
 App::bind('ColladAPI\Services\SzemelyService', 'ColladAPI\Services\SzemelyServiceImpl');
@@ -24,3 +27,6 @@ App::bind('ColladAPI\Services\KarService', 'ColladAPI\Services\KarServiceImpl');
 App::bind('ColladAPI\Services\PublikacioService', 'ColladAPI\Services\PublikacioServiceImpl');
 App::bind('ColladAPI\Services\TanulmanyutService', 'ColladAPI\Services\TanulmanyutServiceImpl');
 App::bind('ColladAPI\Services\TDKDolgozatService', 'ColladAPI\Services\TDKDolgozatServiceImpl');
+App::bind('ColladAPI\Services\NyelvService', 'ColladAPI\Services\NyelvServiceImpl');
+App::bind('ColladAPI\Services\SzerepkorService', 'ColladAPI\Services\SzerepkorServiceImpl');
+App::bind('ColladAPI\Services\FokozatService', 'ColladAPI\Services\FokozatServiceImpl');

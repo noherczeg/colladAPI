@@ -7,7 +7,6 @@
 
 namespace ColladAPI\Services;
 
-
 use ColladAPI\Entities\Szemely;
 
 class MailService {

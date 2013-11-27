@@ -7,10 +7,6 @@
 
 namespace ColladAPI\Repositories;
 
-use ColladAPI\Repositories\CRUDRepository;
-
 interface TanszekRepository extends CRUDRepository {
-
-    public function szemelyekByDate($tanszekId, \DateTime $date);
 
 }
