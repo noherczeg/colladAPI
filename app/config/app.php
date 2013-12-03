@@ -13,7 +13,7 @@ return array(
 	|
 	*/
 
-	'debug' => true,
+	'debug' => false,
 
 	/*
 	|--------------------------------------------------------------------------
@@ -26,7 +26,7 @@ return array(
 	|
 	*/
 
-	'url' => 'http://localhost/collad',
+	'url' => 'https://api.norbertherczeg.me',
 
 	/*
 	|--------------------------------------------------------------------------
@@ -125,7 +125,7 @@ return array(
 		'Illuminate\View\ViewServiceProvider',
 		'Illuminate\Workbench\WorkbenchServiceProvider',
         'Zizaco\Entrust\EntrustServiceProvider',
-        'ColladAPI\Providers\SerializerServiceProvider',
+        'Noherczeg\RestExt\RestExtServiceProvider',
 	),
 
 	/*
@@ -191,7 +191,9 @@ return array(
 		'Validator'       => 'Illuminate\Support\Facades\Validator',
 		'View'            => 'Illuminate\Support\Facades\View',
         'Entrust'         => 'Zizaco\Entrust\EntrustFacade',
-        'Serializer'      => 'ColladAPI\Providers\Serializer'
+        'RestExt'         => 'Noherczeg\RestExt\Facades\RestExt',
+        'RestLinker'      => 'Noherczeg\RestExt\Facades\RestLinker',
+        'RestResponse'    => 'Noherczeg\RestExt\Facades\RestResponse',
 	),
 
 );

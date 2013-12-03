@@ -1,15 +1,11 @@
 <?php
-/**
- * Created by Norbert Csaba Herczeg.
- * Date: 9/25/13
- * Time: 11:47 PM
- */
 
-use Illuminate\Support\Facades\Log;
-use ColladAPI\Exceptions\ErrorMessageException;
-use ColladAPI\Exceptions\NotFoundException;
-use ColladAPI\Exceptions\PermissionException;
+
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Noherczeg\RestExt\Exceptions\ErrorMessageException;
+use Noherczeg\RestExt\Exceptions\NotFoundException;
+use Noherczeg\RestExt\Exceptions\PermissionException;
+use Noherczeg\RestExt\Exceptions\ValidationException;
 
 App::error(function(Exception $exception, $code) {
     Log::error($exception);
@@ -36,11 +32,21 @@ App::error(function(Symfony\Component\HttpKernel\Exception\HttpException $e, $co
             $content['content'] = 'A kért erőforrás nem található';
             break;
 
+        case 406:
+            $content['content'] = 'A küldött Content-Type nem engedélyezett';
+            break;
+
         default:
             $content['content'] = 'Ismeretlen hiba lépett fel';
     }
 
     return Response::json($e->getMessage() ?: $content, $code, $headers);
+});
+
+App::error(function(ValidationException $e) {
+    $messages = $e->getMessages()->all();
+
+    return Response::json([ 'reason' => $messages->all(), ], 400);
 });
 
 App::error(function(ErrorMessageException $e) {
@@ -50,7 +56,7 @@ App::error(function(ErrorMessageException $e) {
 });
 
 App::error(function(NotFoundException $e) {
-    $default_message = 'a kért erőforrás nem található';
+    $default_message = 'a kért oldal nem található';
 
     return Response::json([ 'reason' => $e->getMessage() ?: $default_message, ], 404);
 });

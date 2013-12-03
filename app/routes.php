@@ -12,9 +12,11 @@
 */
 
 use Illuminate\Support\Facades\Route;
+use Noherczeg\RestExt\Facades\RestExt;
 
 Route::get('/', function()
 {
+
     return Redirect::to('/v1', 301);
 	//return View::make('hello');
     $routes = [];
@@ -32,23 +34,26 @@ Route::get('/', function()
     dd($routes);
 });
 
-Route::group(array('prefix' => 'v1', 'before' => 'api.auth'), function()
+Route::group(array('prefix' => RestExt::getVersion(), 'before' => 'api.auth'), function()
 {
-    Route::get('/', 'RootController@discover');
-    Route::get('szemelyek', 'SzemelyekController@index');
-    Route::get('szemelyek/{id}', 'SzemelyekController@show');
-    Route::get('szemelyek/{id}/tanszekek', 'SzemelyekTanszekekController@listTanszekekForSzemely');
-    Route::get('szemelyek/{id}/fokozatok', 'SzemelyekFokozatokController@listFokozatokForSzemely');
+    Route::get('/',                         'ColladAPI\Core\Rest\RootController@discover');
+    Route::get('szemelyek',                 'ColladAPI\Core\Szemely\SzemelyekController@index');
+    Route::get('szemelyek/{id}',            'ColladAPI\Core\Szemely\SzemelyekController@show');
+    Route::get('szemelyek/{id}/tanszekek',  'ColladAPI\Core\Szemely\SzemelyekTanszekekController@listTanszekekForSzemely');
+    Route::get('szemelyek/{id}/fokozatok',  'ColladAPI\Core\Szemely\SzemelyekFokozatokController@listFokozatokForSzemely');
 
-    Route::get('tanszekek/{id}', 'TanszekekController@show');
+    Route::get('tanszekek/{id}',            'ColladAPI\Core\Tanszek\TanszekekController@show');
 
-    Route::get('nyelvek', 'NyelvekController@index');
-    Route::get('nyelvek/{id}', 'NyelvekController@show');
+    Route::get('nyelvek',                   'ColladAPI\Core\Nyelv\NyelvekController@index');
+    Route::get('nyelvek/{id}',              'ColladAPI\Core\Nyelv\NyelvekController@show');
 
-    Route::get('szerepkorok', 'SzerepkorokController@index');
-    Route::get('szerepkorok/{id}', 'SzerepkorokController@show');
+    Route::get('szerepkorok',               'ColladAPI\Core\Szerepkor\SzerepkorokController@index');
+    Route::get('szerepkorok/{id}',          'ColladAPI\Core\Szerepkor\SzerepkorokController@show');
 
-    Route::get('fokozatok', 'FokozatokController@index');
-    Route::get('fokozatok/{id}', 'FokozatokController@show');
+    Route::get('fokozatok',                 'ColladAPI\Core\Fokozat\FokozatokController@index');
+    Route::get('fokozatok/{id}',            'ColladAPI\Core\Fokozat\FokozatokController@show');
+
+    Route::get('szervezetek',               'ColladAPI\Core\Szervezet\SzervezetekController@index');
+    Route::get('szervezetek/{id}',          'ColladAPI\Core\Szervezet\SzervezetekController@show');
 
 });

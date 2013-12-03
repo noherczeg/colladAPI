@@ -28,7 +28,7 @@ return array(
 	|
 	*/
 
-	'model' => 'ColladAPI\Entities\Szemely',
+	'model' => 'ColladAPI\Core\Szemely\Szemely',
 
 	/*
 	|--------------------------------------------------------------------------

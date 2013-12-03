@@ -15,9 +15,9 @@ use Illuminate\Support\Facades\App;
 ClassLoader::addDirectories(array(
 
 	app_path().'/commands',
-	app_path().'/controllers',
 	app_path().'/database/seeds',
     app_path().'/ColladAPI',
+    app_path().'/ColladAPI/Core',
 
 ));
 

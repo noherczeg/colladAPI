@@ -11,11 +11,10 @@
 	"autoload": {
 		"classmap": [
 			"app/commands",
-			"app/controllers",
 			"app/database/migrations",
 			"app/database/seeds",
 			"app/tests/TestCase.php",
-            "app/ColladAPI/Entities"
+            "app/ColladAPI"
 		],
         "psr-0": {
             "ColladAPI" : "app/"

@@ -1,6 +1,5 @@
 <?php
 
-use \ColladAPI\Entities\Szemely;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +11,8 @@ use \ColladAPI\Entities\Szemely;
 | automatically sets it as the locale.
 |
 */
+
+use ColladAPI\Core\Szemely\Szemely;
 
 App::before(function($request)
 {
