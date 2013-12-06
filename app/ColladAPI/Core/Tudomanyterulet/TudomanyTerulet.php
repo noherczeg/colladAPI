@@ -1,15 +1,10 @@
-<?php
-/**
- * Created by Norbert Csaba Herczeg.
- * Date: 9/26/13
- * Time: 2:15 AM
- */
-
-namespace ColladAPI\Entities;
+<?php namespace ColladAPI\Core\TudomanyTerulet;
 
 use ColladAPI\Entities\ColladEntity;
+use Noherczeg\RestExt\Entities\ResourceEloquentEntity;
+use Noherczeg\RestExt\Entities\ResourceEntity;
 
-class TudomanyTerulet extends ColladEntity {
+class TudomanyTerulet extends ResourceEloquentEntity implements ResourceEntity {
 
     protected $table = "tudomanyterulet";
 

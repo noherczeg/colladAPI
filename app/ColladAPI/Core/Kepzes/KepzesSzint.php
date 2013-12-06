@@ -17,4 +17,9 @@ class KepzesSzint extends ResourceEloquentEntity implements ResourceEntity {
         return $this->hasMany('ColladAPI\\Core\\Szak\\Szak', 'kepzesszint_id');
     }
 
+    public function scopeWithAll($query)
+    {
+        return $query->with('szakok');
+    }
+
 }

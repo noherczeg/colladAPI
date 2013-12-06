@@ -37,4 +37,9 @@ class Bevetel extends ResourceEloquentEntity implements ResourceEntity {
         return $this->belongsTo('ColladAPI\\Core\\Intezet\\Intezet');
     }
 
+    public function scopeWithAll($query)
+    {
+        return $query->with('beruhazasok', 'tipus', 'palyazat', 'tanszek', 'intezet');
+    }
+
 }

@@ -13,4 +13,9 @@ class FokozatEloquentRepository extends RestExtRepository implements FokozatRepo
     {
         // TODO: Implement allForSzemely() method.
     }
+
+    public function findByIdWithAll($id)
+    {
+        return $this->entity->withAll()->where('id', '=', $id)->firstOrFail();
+    }
 }

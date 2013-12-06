@@ -22,11 +22,16 @@ class Intezmeny extends ResourceEloquentEntity implements ResourceEntity {
     }
 
     public function szemelyek() {
-        return $this->belongsToMany('ColladAPI\\Core\\Szemely\\Szemely', 'szmeely_has_intezmeny', 'intezmeny_id', 'szemely_id')->withPivot('kezdo_datum', 'vege_datum', 'megjegyzes');
+        return $this->belongsToMany('ColladAPI\\Core\\Szemely\\Szemely', 'szemely_has_intezmeny', 'intezmeny_id', 'szemely_id')->withPivot('kezdo_datum', 'vege_datum', 'megjegyzes');
     }
 
     public function palyazatok() {
         return $this->belongsToMany('ColladAPI\\Core\\Palyazat\\Palyazat', 'palyazat_has_intezmeny', 'intezmeny_id', 'palyazat_id')->withPivot('felelos', 'megjegyzes');
+    }
+
+    public function scopeWithAll($query)
+    {
+        return $query->with('orszag', 'szemelyek', 'palyazatok');
     }
 
 }

@@ -7,6 +7,8 @@ class AlkotasTipus extends ResourceEloquentEntity implements ResourceEntity {
 
     protected $table = "alkotas_tipus";
 
+    protected $rootRelName = 'alkotastipusok';
+
     protected $fillable = ['nev'];
 
     protected $rules = [

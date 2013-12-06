@@ -1,38 +1,62 @@
 <?php namespace ColladAPI\Core\Fokozat;
 
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Response;
 use Noherczeg\RestExt\Controllers\RestExtController;
+use Noherczeg\RestExt\Facades\RestExt;
+use Noherczeg\RestExt\Facades\RestLinker;
+use Noherczeg\RestExt\Facades\RestResponse;
+use Noherczeg\RestExt\Providers\HttpStatus;
+use Noherczeg\RestExt\Providers\MediaType;
 
 class FokozatokController extends RestExtController {
 
-    public function __construct(FokozatService $fokozatService)
+    public function __construct(FokozatRepository $repo)
     {
         parent::__construct();
-        $this->service = $fokozatService;
+        $this->repository = $repo;
     }
 
     public function index()
     {
         if ($this->pageParam())
-            $this->setPagination(2);
-        $this->enableLinks(true);
+            $this->repository->enablePagination(10);
 
-        $fokozatok = $this->service->all();
+        $resource = RestExt::from($this->repository->all())->links()->create(true);
 
-        $resource = $this->createResource($fokozatok, true);
+        $resource->addLink(RestLinker::createParentLink());
 
-        $resource->addLink($this->createParentLink());
-
-        return $this->sendResource($resource);
+        return RestResponse::sendResource($resource);
     }
 
     public function show($id)
     {
-        $this->enableLinks(true);
-        $fokozat = $this->service->findById($id);
+        $fokozat = $this->repository->findByIdWithAll($id);
 
-        $resource = $this->createResource($fokozat);
-        $resource->addLink($this->createParentLink());
+        $resource = RestExt::from($fokozat)->links()->create(true);
+        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLinks(RestLinker::linksToEntityRelations($fokozat));
 
-        return $this->sendResource($resource);
+        return RestResponse::sendResource($resource);
+    }
+
+    public function store()
+    {
+        $this->consume([MediaType::APPLICATION_JSON]);
+        $this->repository->save(Input::json()->all());
+
+        return Response::make(null, HttpStatus::CREATED);
+    }
+
+    public function update()
+    {
+        return $this->repository->update(Input::json()->all());
+    }
+
+    public function destroy($id)
+    {
+        $this->repository->delete($id);
+
+        return Response::make(null, HttpStatus::OK);
     }
 } 

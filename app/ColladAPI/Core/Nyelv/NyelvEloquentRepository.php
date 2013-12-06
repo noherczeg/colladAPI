@@ -9,4 +9,8 @@ class NyelvEloquentRepository extends RestExtRepository implements NyelvReposito
         $this->entity = $nyelv;
     }
 
-} 
+    public function findByIdWithAll($id)
+    {
+        return $this->entity->withAll()->where('id', '=', $id)->firstOrFail();
+    }
+}

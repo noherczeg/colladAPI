@@ -1,8 +1,9 @@
 <?php namespace ColladAPI\Core\TDKDolgozat;
 
-use ColladAPI\Entities\ColladEntity;
+use Noherczeg\RestExt\Entities\ResourceEloquentEntity;
+use Noherczeg\RestExt\Entities\ResourceEntity;
 
-class TDKDolgozat extends ColladEntity {
+class TDKDolgozat extends ResourceEloquentEntity implements ResourceEntity {
 
     protected $table = "tdkdolgozat";
 

@@ -7,6 +7,8 @@ class BevetelTipus extends ResourceEloquentEntity implements ResourceEntity {
 
     protected $table = "bevetel_tipus";
 
+    protected $rootRelName = 'beveteltipusok';
+
     protected $fillable = ['nev'];
 
     protected $rules = [

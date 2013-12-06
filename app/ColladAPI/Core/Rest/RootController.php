@@ -4,34 +4,41 @@ use Noherczeg\RestExt\Controllers\RestExtController;
 use Noherczeg\RestExt\Facades\RestLinker;
 use Noherczeg\RestExt\Http\Resource;
 use Noherczeg\RestExt\Facades\RestResponse;
+use Noherczeg\RestExt\Services\Linker;
 
 class RootController extends RestExtController {
 
-    public function __construct()
+    private $linker;
+
+    public function __construct(Linker $linker)
     {
         parent::__construct();
+        $this->linker = $linker;
     }
 
     public function discover()
     {
 
         $resource = new Resource();
-
-        $resource->addLink(RestLinker::createLinkToFirstPage('szemelyek'));
-        $resource->addLink(RestLinker::createLinkToFirstPage('szervezetek'));
-        if (\Entrust::hasRole('ADMIN')) $resource->addLink(RestLinker::createLink('szerepkorok'));
-        $resource->addLink(RestLinker::createLink('fokozatok'));
-        $resource->addLink(RestLinker::createLinkToFirstPage('publikaciok'));
-        $resource->addLink(RestLinker::createLink('szakok'));
-        $resource->addLink(RestLinker::createLinkToFirstPage('esemenyek'));
-        $resource->addLink(RestLinker::createLink('nyelvek'));
-        $resource->addLink(RestLinker::createLinkToFirstPage('tanulmanyutak'));
-        $resource->addLink(RestLinker::createLinkToFirstPage('tdkdolgozatok'));
-        $resource->addLink(RestLinker::createLink('orszagok'));
-        $resource->addLink(RestLinker::createLinkToFirstPage('intezmenyek'));
-        $resource->addLink(RestLinker::createLinkToFirstPage('intezetek'));
-        $resource->addLink(RestLinker::createLinkToFirstPage('beruhazasok'));
-        $resource->addLink(RestLinker::createLinkToFirstPage('alkotasok'));
+        $resource->addLink($this->linker->createLinkToFirstPage('szemelyek'));
+        $resource->addLink($this->linker->createLinkToFirstPage('szervezetek'));
+        if (\Entrust::hasRole('ADMIN')) $resource->addLink($this->linker->createLink('szerepkorok'));
+        $resource->addLink($this->linker->createLink('fokozatok'));
+        $resource->addLink($this->linker->createLink('kepzesszintek'));
+        $resource->addLink($this->linker->createLinkToFirstPage('publikaciok'));
+        $resource->addLink($this->linker->createLink('szakok'));
+        $resource->addLink($this->linker->createLinkToFirstPage('esemenyek'));
+        $resource->addLink($this->linker->createLink('nyelvek'));
+        $resource->addLink($this->linker->createLink('nyelvtudasok'));
+        $resource->addLink($this->linker->createLinkToFirstPage('tanulmanyutak'));
+        $resource->addLink($this->linker->createLinkToFirstPage('tdkdolgozatok'));
+        $resource->addLink($this->linker->createLink('orszagok'));
+        $resource->addLink($this->linker->createLinkToFirstPage('intezmenyek'));
+        $resource->addLink($this->linker->createLinkToFirstPage('intezetek'));
+        $resource->addLink($this->linker->createLinkToFirstPage('beruhazasok'));
+        $resource->addLink($this->linker->createLinkToFirstPage('bevetelek'));
+        $resource->addLink($this->linker->createLinkToFirstPage('dijak'));
+        $resource->addLink($this->linker->createLinkToFirstPage('alkotasok'));
 
         return RestResponse::sendResource($resource);
     }

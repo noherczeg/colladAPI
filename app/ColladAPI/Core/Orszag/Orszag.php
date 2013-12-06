@@ -20,4 +20,15 @@ class Orszag extends ResourceEloquentEntity implements ResourceEntity {
         return $this->hasMany('ColladAPI\\Core\\Intezmeny\\Intezmeny', 'orszag_id');
     }
 
+    /**
+     * Scope metodus az entitas osszes relaciojanak "felcsatolasara"
+     *
+     * @param $query
+     * @return Builder
+     */
+    public function scopeWithAll($query)
+    {
+        return $query->with('intezmenyek');
+    }
+
 }

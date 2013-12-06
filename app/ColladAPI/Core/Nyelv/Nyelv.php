@@ -16,4 +16,17 @@ class Nyelv extends ResourceEloquentEntity implements ResourceEntity {
         'kod' => 'required|alpha|size:2'
     ];
 
+    public function publikaciok() {
+        return $this->hasMany('ColladAPI\\Core\\Publikacio\\Publikacio');
+    }
+
+    public function nyelvtudasok() {
+        return $this->hasMany('ColladAPI\\Core\\Nyelv\\Nyelvtudas');
+    }
+
+    public function scopeWithAll($query)
+    {
+        return $query->with('publikaciok', 'nyelvtudasok');
+    }
+
 }

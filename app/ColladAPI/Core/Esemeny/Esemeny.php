@@ -39,4 +39,9 @@ class Esemeny extends ResourceEloquentEntity implements ResourceEntity {
         return $this->hasMany('ColladAPI\\Core\\TDKDolgozat\\TDKDolgozat', 'otdk_esemeny_id');
     }
 
+    public function scopeWithAll($query)
+    {
+        return $query->with('tipus', 'szemelyek', 'palyazatok', 'kariTDKDolgozatok', 'oTDKDolgozatok');
+    }
+
 }

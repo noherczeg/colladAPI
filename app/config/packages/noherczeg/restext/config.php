@@ -94,6 +94,8 @@ return array(
 
     'page_param' => 'page',
 
+    'access_policy' => 'blacklist',
+
     'version' => 'v1',
 
 );

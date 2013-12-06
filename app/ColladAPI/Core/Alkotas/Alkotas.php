@@ -31,4 +31,15 @@ class Alkotas extends ResourceEloquentEntity implements ResourceEntity {
         return $this->belongsToMany('ColladAPI\\Core\\Palyazat\\Palyazat', 'palyazat_has_alkotas', 'alkotas_id', 'palyazat_id');
     }
 
+    /**
+     * Scope metodus az entitas osszes relaciojanak "felcsatolasara"
+     *
+     * @param $query
+     * @return Builder
+     */
+    public function scopeWithAll($query)
+    {
+        return $query->with('szemelyek', 'tipus', 'palyazatok');
+    }
+
 }

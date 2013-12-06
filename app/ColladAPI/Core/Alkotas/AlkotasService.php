@@ -6,4 +6,6 @@ interface AlkotasService extends CRUDService {
 
     public function allBetweenDates(\DateTime $from, \DateTime $to);
 
+    public function findByIdWithAll($id);
+
 }

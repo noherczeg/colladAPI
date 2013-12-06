@@ -7,6 +7,8 @@ class EsemenyTipus extends ResourceEloquentEntity implements ResourceEntity {
 
     protected $table = "esemeny_tipus";
 
+    protected $rootRelName = 'esemenytipusok';
+
     protected $fillable = ['nev'];
 
     protected $rules = [

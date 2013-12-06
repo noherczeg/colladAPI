@@ -7,6 +7,8 @@ class PublikacioTipus extends ResourceEloquentEntity implements ResourceEntity {
 
     protected $table = "publikacio_tipus";
 
+    protected $rootRelName = 'publikaciotipusok';
+
     protected $fillable = ['nev'];
 
     protected $rules = [

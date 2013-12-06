@@ -25,4 +25,9 @@ class Beruhazas extends ResourceEloquentEntity implements ResourceEntity {
         return $this->belongsTo('ColladAPI\\Core\\Beruhazas\\BeruhazasTipus');
     }
 
+    public function scopeWithAll($query)
+    {
+        return $query->with('bevetel', 'tipus');
+    }
+
 }

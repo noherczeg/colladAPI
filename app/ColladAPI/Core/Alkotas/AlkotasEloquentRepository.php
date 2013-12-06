@@ -10,11 +10,6 @@ class AlkotasEloquentRepository extends RestExtRepository implements AlkotasRepo
         parent::__construct($alkotas);
     }
 
-    public function all()
-    {
-        return $this->entity->with('tipus')->get();
-    }
-
     public function allBetweenDates(\DateTime $from, \DateTime $to)
     {
         return $this->entity->where('datum', '>=', $from->format('Y-m-d'))->where('datum', '<=', $to->format('Y-m-d'))->with('palyazatok', 'szemelyek')->get();
@@ -23,5 +18,10 @@ class AlkotasEloquentRepository extends RestExtRepository implements AlkotasRepo
     public function findById($entityId)
     {
         return $this->entity->with('palyazatok')->findOrFail($entityId);
+    }
+
+    public function findByIdWithAll($id)
+    {
+        return $this->entity->withAll()->where('id', '=', $id)->firstOrFail();
     }
 }

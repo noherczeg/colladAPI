@@ -16,44 +16,67 @@ use Noherczeg\RestExt\Facades\RestExt;
 
 Route::get('/', function()
 {
-
     return Redirect::to('/v1', 301);
-	//return View::make('hello');
-    $routes = [];
-    foreach (Route::getFacadeRoot()->getRoutes()->all() as $route) {
-        $praction = explode("@", $route->getAction());
-        $routes[] = [
-            "controller" => (strlen($praction[0]) == 0) ? $route->getAction() : $praction[0],
-            "action" => (isset($praction[1])) ? $praction[1] : null,
-            "params" => $route->getParameters(),
-            "path" => $route->getPath(),
-            "method" => $route->getMethods()[0]
-        ];
-    }
-
-    dd($routes);
 });
 
 Route::group(array('prefix' => RestExt::getVersion(), 'before' => 'api.auth'), function()
 {
-    Route::get('/',                         'ColladAPI\Core\Rest\RootController@discover');
-    Route::get('szemelyek',                 'ColladAPI\Core\Szemely\SzemelyekController@index');
-    Route::get('szemelyek/{id}',            'ColladAPI\Core\Szemely\SzemelyekController@show');
+    // ENTRY POINT
+    Route::get('/','ColladAPI\Core\Rest\RootController@discover');
+
+    // BERUHAZASOK
+    Route::resource('beruhazasok', 'ColladAPI\Core\Beruhazas\BeruhazasokController', array('except' => array('create', 'edit')));
+
+    // DIJAK
+    Route::resource('dijak', 'ColladAPI\Core\Dij\DijakController', array('except' => array('create', 'edit')));
+
+    // ESEMENYEK
+    Route::resource('esemenyek', 'ColladAPI\Core\Esemeny\EsemenyekController', array('except' => array('create', 'edit')));
+
+    // INTEZETEK
+    Route::resource('intezetek', 'ColladAPI\Core\Intezet\IntezetekController', array('except' => array('create', 'edit')));
+
+    // INTEZMENYEK
+    Route::resource('intezmenyek', 'ColladAPI\Core\Intezmeny\IntezmenyekController', array('except' => array('create', 'edit')));
+
+    // KEPZESSZINTEK
+    Route::resource('kepzesszintek', 'ColladAPI\Core\Kepzes\KepzesSzintekController', array('except' => array('create', 'edit')));
+
+    // BEVETELEK
+    Route::resource('bevetelek', 'ColladAPI\Core\Bevetel\BevetelekController', array('except' => array('create', 'edit')));
+
+    // SZEMELYEK
+    Route::resource('szemelyek', 'ColladAPI\Core\Rest\RootController', array('except' => array('create', 'edit')));
+
     Route::get('szemelyek/{id}/tanszekek',  'ColladAPI\Core\Szemely\SzemelyekTanszekekController@listTanszekekForSzemely');
     Route::get('szemelyek/{id}/fokozatok',  'ColladAPI\Core\Szemely\SzemelyekFokozatokController@listFokozatokForSzemely');
 
-    Route::get('tanszekek/{id}',            'ColladAPI\Core\Tanszek\TanszekekController@show');
+    // TANSZEKEK
+    Route::resource('tanszekek', 'ColladAPI\Core\Tanszek\TanszekekController', array('except' => array('create', 'edit')));
 
-    Route::get('nyelvek',                   'ColladAPI\Core\Nyelv\NyelvekController@index');
-    Route::get('nyelvek/{id}',              'ColladAPI\Core\Nyelv\NyelvekController@show');
+    // NYELVEK
+    Route::resource('nyelvek', 'ColladAPI\Core\Nyelv\NyelvekController', array('except' => array('create', 'edit')));
 
-    Route::get('szerepkorok',               'ColladAPI\Core\Szerepkor\SzerepkorokController@index');
-    Route::get('szerepkorok/{id}',          'ColladAPI\Core\Szerepkor\SzerepkorokController@show');
+    // NYELVTUDASOK
+    Route::resource('nyelvtudasok', 'ColladAPI\Core\Nyelv\NyelvtudasokController', array('except' => array('create', 'edit')));
 
-    Route::get('fokozatok',                 'ColladAPI\Core\Fokozat\FokozatokController@index');
-    Route::get('fokozatok/{id}',            'ColladAPI\Core\Fokozat\FokozatokController@show');
+    // SZEREPKOROK
+    Route::resource('szerepkorok', 'ColladAPI\Core\Szerepkor\SzerepkorokController', array('except' => array('create', 'edit')));
 
-    Route::get('szervezetek',               'ColladAPI\Core\Szervezet\SzervezetekController@index');
-    Route::get('szervezetek/{id}',          'ColladAPI\Core\Szervezet\SzervezetekController@show');
+    // FOKOZATOK
+    Route::resource('fokozatok', 'ColladAPI\Core\Fokozat\FokozatokController', array('except' => array('create', 'edit')));
+
+    // SZERVEZETEK
+    Route::resource('szervezetek', 'ColladAPI\Core\Szervezet\SzervezetekController', array('except' => array('create', 'edit')));
+
+    // ORSZAGOK
+    Route::resource('orszagok', 'ColladAPI\Core\Orszag\OrszagokController', array('except' => array('create', 'edit')));
+
+    // ALKOTASOK
+    Route::resource('alkotasok', 'ColladAPI\Core\Alkotas\AlkotasokController', array('except' => array('create', 'edit')));
+
+    // PUBLIKACIOK
+    Route::resource('publikaciok', 'ColladAPI\Core\Publikacio\PublikaciokController', array('except' => array('create', 'edit')));
+    Route::resource('publikaciok.nyelvek', 'ColladAPI\Core\Publikacio\PublikaciokNyelvekController', array('except' => array('create', 'edit')));
 
 });

@@ -1,5 +1,6 @@
 <?php namespace ColladAPI\Core\Publikacio;
 
+use Illuminate\Database\Eloquent\Builder;
 use Noherczeg\RestExt\Entities\ResourceEloquentEntity;
 use Noherczeg\RestExt\Entities\ResourceEntity;
 
@@ -8,6 +9,8 @@ class Publikacio extends ResourceEloquentEntity implements ResourceEntity {
     protected $table = "publikacio";
 
     protected $rootRelName = 'publikaciok';
+
+    protected $hidden = ['created_at'];
 
     protected $fillable = [
         'tipus_id', 'nyelv_id', 'cim', 'datum', 'lektoralt', 'megjelenes_hely', 'megjelenes_kiado', 'oldalszam',
@@ -27,7 +30,8 @@ class Publikacio extends ResourceEloquentEntity implements ResourceEntity {
         'hivatkozas_fuggo' => 'integer',
         'mtmt_id' => 'max:64',
         'megjegyzes' => 'max:512',
-
+        'tipus_id' => 'required',
+        'nyelv_id' => 'required',
     ];
 
     public function palyazatok() {
@@ -44,6 +48,57 @@ class Publikacio extends ResourceEloquentEntity implements ResourceEntity {
 
     public function szemelyek() {
         return $this->belongsToMany('ColladAPI\\Core\\Szemely\\Szemely', 'publikacio_has_szemely', 'publikacio_id', 'szemely_id');
+    }
+
+    /**
+     * Scope metodus az entitas osszes relaciojanak "felcsatolasara"
+     *
+     * @param $query
+     * @return Builder
+     */
+    public function scopeWithAll($query)
+    {
+        return $query->with('palyazatok', 'nyelv', 'tipus');
+    }
+
+    /**
+     * Resource reprezentacio eseten bool erteket adunk vissza nem intet
+     *
+     * @return bool
+     */
+    public function getHivatkozasFuggetlenAttribute()
+    {
+        return ($this->attributes['hivatkozas_fuggetlen'] === 1) ? true : false;
+    }
+
+    /**
+     * Boolean erteket konvertal int-be, perzisztenciahoz
+     *
+     * @param bool $value
+     */
+    public function setHivatkozasFuggetlenAttribute($value)
+    {
+        $this->attributes['hivatkozas_fuggetlen'] = ($value === true) ? 1 : 0;
+    }
+
+    /**
+     * Resource reprezentacio eseten bool erteket adunk vissza nem intet
+     *
+     * @return bool
+     */
+    public function getLektoraltAttribute()
+    {
+        return ($this->attributes['lektoralt'] === 1) ? true : false;
+    }
+
+    /**
+     * Boolean erteket konvertal int-be, perzisztenciahoz
+     *
+     * @param bool $value
+     */
+    public function setLektoraltAttribute($value)
+    {
+        $this->attributes['lektoralt'] = ($value === true) ? 1 : 0;
     }
 
 }

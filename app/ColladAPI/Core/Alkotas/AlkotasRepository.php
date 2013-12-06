@@ -13,4 +13,6 @@ interface AlkotasRepository extends CRUDRepository {
      */
     public function allBetweenDates(\DateTime $from, \DateTime $to);
 
+    public function findByIdWithAll($id);
+
 }

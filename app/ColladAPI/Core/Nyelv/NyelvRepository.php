@@ -4,4 +4,6 @@ use Noherczeg\RestExt\Repository\CRUDRepository;
 
 interface NyelvRepository extends CRUDRepository {
 
+    public function findByIdWithAll($id);
+
 } 

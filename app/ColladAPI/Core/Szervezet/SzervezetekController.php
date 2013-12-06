@@ -22,7 +22,7 @@ class SzervezetekController extends RestExtController {
         if ($this->pageParam())
             $this->szervezetService->enablePagination(10);
 
-        $resource = RestExt::from($this->szervezetService->all())->links()->create('szervezetek');
+        $resource = RestExt::from($this->szervezetService->all())->links()->create(true);
 
         $resource->addLink(RestLinker::createParentLink());
 

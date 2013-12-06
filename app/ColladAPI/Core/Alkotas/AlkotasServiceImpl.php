@@ -14,4 +14,8 @@ class AlkotasServiceImpl extends CRUDServiceImpl implements AlkotasService {
         return $this->repository->allBetweenDates($from, $to);
     }
 
+    public function findByIdWithAll($id)
+    {
+        return $this->repository->findByIdWithAll($id);
+    }
 }

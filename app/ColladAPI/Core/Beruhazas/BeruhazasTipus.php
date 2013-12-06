@@ -7,6 +7,8 @@ class BeruhazasTipus extends ResourceEloquentEntity implements ResourceEntity {
 
     protected $table = "beruhazas_tipus";
 
+    protected $rootRelName = 'beruhazastipusok';
+
     protected $fillable = ['nev'];
 
     protected $rules = [

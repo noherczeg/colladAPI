@@ -3,9 +3,13 @@
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
 use Noherczeg\RestExt\Controllers\RestExtController;
 use Noherczeg\RestExt\Exceptions\ErrorMessageException;
 use Noherczeg\RestExt\Exceptions\ValidationException;
+use Noherczeg\RestExt\Facades\RestExt;
+use Noherczeg\RestExt\Facades\RestLinker;
+use Noherczeg\RestExt\Facades\RestResponse;
 
 class AlkotasokController extends RestExtController
 {
@@ -19,15 +23,20 @@ class AlkotasokController extends RestExtController
 
     public function index()
     {
-        $alkotasok = [];
+        if ($this->pageParam())
+            $this->alkotasService->enablePagination(10);
         
         if (!is_null(Request::query('from')) && !is_null(Request::query('to'))) {
             $alkotasok = $this->alkotasService->allBetweenDates(new \DateTime(Request::query('from')), new \DateTime(Request::query('to')));
         } else {
             $alkotasok = $this->alkotasService->all();
         }
-        
-        return Response::json($alkotasok, 200);
+
+        $resource = RestExt::from($alkotasok)->links()->create(true);
+
+        $resource->addLink(RestLinker::createParentLink());
+
+        return RestResponse::sendResource($resource);
     }
 
     /**
@@ -55,14 +64,13 @@ class AlkotasokController extends RestExtController
      */
     public function show($id)
     {
-        $alkotas = $this->alkotasService->findById($id);
-        
-        if ($alkotas == null)
-            return Response::json([
-                'reason' => 'not found'
-            ], 404);
-        
-        return Response::json($alkotas, 200);
+        $alkotas = $this->alkotasService->findByIdWithAll($id);
+
+        $resource = RestExt::from($alkotas)->links()->create(true);
+        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLinks(RestLinker::linksToEntityRelations($alkotas));
+
+        return RestResponse::sendResource($resource);
     }
 
     /**
@@ -73,12 +81,8 @@ class AlkotasokController extends RestExtController
      */
     public function update($id)
     {
-        try {
-            $updated = $this->alkotasService->update($id, Input::json()->all());
-            return Response::json($updated->toArray());
-        } catch (ValidationException $ex) {
-            App::abort(500, $ex->getMessage());
-        }
+        $updated = $this->alkotasService->update(Input::json()->all());
+        return Response::json($updated);
     }
 
     /**
@@ -89,6 +93,8 @@ class AlkotasokController extends RestExtController
      */
     public function destroy($id)
     {
-        //
+        $this->alkotasService->delete($id);
+
+        return Response::make(null, HttpStatus::OK);
     }
 }

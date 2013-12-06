@@ -9,8 +9,8 @@ class EsemenyEloquentRepository extends RestExtRepository implements  EsemenyRep
         parent::__construct($esemeny);
     }
 
-    public function findById($entityId)
+    public function findByIdWithAll($id)
     {
-        return $this->entity->with('tipus', 'szemelyek', 'szemelyek.szerepkor', 'palyazatok', 'otdkdolgozatok', 'karitdkdolgozatok')->findOrFail($entityId);
+        return $this->entity->withAll()->where('id', '=', $id)->firstOrFail();
     }
 }

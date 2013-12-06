@@ -23,4 +23,9 @@ class Intezet extends ResourceEloquentEntity implements ResourceEntity {
         return $this->belongsToMany('ColladAPI\\Core\\Tanszek\\Tanszek', 'intezet_has_tanszek', 'intezet_id', 'tanszek_id')->withPivot('kezdo_datum', 'vege_datum');
     }
 
+    public function scopeWithAll($query)
+    {
+        return $query->with('bevetelek', 'tanszekek');
+    }
+
 }

@@ -1,7 +1,9 @@
 <?php
 
-
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\URL;
 use Noherczeg\RestExt\Exceptions\ErrorMessageException;
 use Noherczeg\RestExt\Exceptions\NotFoundException;
 use Noherczeg\RestExt\Exceptions\PermissionException;
@@ -13,31 +15,32 @@ App::error(function(Exception $exception, $code) {
 
 App::error(function(Symfony\Component\HttpKernel\Exception\HttpException $e, $code) {
     $headers = $e->getHeaders();
-    $content = ["content" => null, "links" => [
+    $content = ["reason" => null, "links" => [
         ["rel" => "self", "href" => URL::full()],
+        ["rel" => "referer", "href" => URL::previous()],
     ]];
 
     switch ($code)
     {
         case 401:
-            $content['content'] = 'Hibás API Kulcs';
+            $content['reason'] = 'Hibás API Kulcs';
             $headers['WWW-Authenticate'] = 'Basic realm="Collad API"';
             break;
 
         case 403:
-            $content['content'] = 'Nincs jogosultsága a művelet elvégzésére';
+            $content['reason'] = 'Nincs jogosultsága a művelet elvégzésére';
             break;
 
         case 404:
-            $content['content'] = 'A kért erőforrás nem található';
+            $content['reason'] = 'A kért erőforrás nem található';
             break;
 
         case 406:
-            $content['content'] = 'A küldött Content-Type nem engedélyezett';
+            $content['reason'] = 'A küldött Content-Type nem engedélyezett';
             break;
 
         default:
-            $content['content'] = 'Ismeretlen hiba lépett fel';
+            $content['reason'] = 'Ismeretlen hiba lépett fel';
     }
 
     return Response::json($e->getMessage() ?: $content, $code, $headers);
@@ -50,9 +53,13 @@ App::error(function(ValidationException $e) {
 });
 
 App::error(function(ErrorMessageException $e) {
-    $messages = $e->getMessages()->all();
+    $onlyFirstMessagePerField = [];
 
-    return Response::json([ 'reason' => $messages[0], ], 400);
+    foreach ($e->getMessages() as $key => $error) {
+        $onlyFirstMessagePerField[$key] = $error[0];
+    }
+
+    return Response::json([ 'reason' => $onlyFirstMessagePerField ], 400);
 });
 
 App::error(function(NotFoundException $e) {

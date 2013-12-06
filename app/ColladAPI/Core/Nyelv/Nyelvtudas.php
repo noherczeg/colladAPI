@@ -13,6 +13,8 @@ class Nyelvtudas extends ResourceEloquentEntity implements ResourceEntity {
 
     protected $table = "nyelvtudas";
 
+    protected $rootRelName = 'nyelvtudasok';
+
     protected $fillable = ['szemely_id', 'nyelv_id', 'nyelvtudas_fok_id', 'bizonyitvany', 'datum', 'megjegyzes'];
 
     public function szemely() {
@@ -25,6 +27,11 @@ class Nyelvtudas extends ResourceEloquentEntity implements ResourceEntity {
 
     public function nyelvtudasFok() {
         return $this->belongsTo('ColladAPI\\Core\\Nyelv\\NyelvtudasFok', 'nyelvtudas_fok_id');
+    }
+
+    public function scopeWithAll($query)
+    {
+        return $query->with('nyelvtudasFok', 'nyelv', 'szemely');
     }
 
 }
