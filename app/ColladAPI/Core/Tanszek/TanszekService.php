@@ -6,4 +6,6 @@ interface TanszekService extends CRUDService {
 
     public function allForSzemely($id);
 
+    public function findByIdWithAll($id);
+
 }

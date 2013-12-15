@@ -9,4 +9,8 @@ class SzerepkorEloquentRepository extends RestExtRepository implements Szerepkor
         $this->entity = $szerepkor;
     }
 
-} 
+    public function findByIdWithAll($id)
+    {
+        return $this->entity->withAll()->where('id', '=', $id)->firstOrFail();
+    }
+}

@@ -7,6 +7,8 @@ class TanulmanyutTipus extends ResourceEloquentEntity implements ResourceEntity 
 
     protected $table = "tanulmanyut_tipus";
 
+    protected $rootRelName = 'tanulmanyuttipus';
+
     protected $fillable = ['nev'];
 
     protected $rules = [

@@ -1,102 +1,66 @@
 <?php namespace ColladAPI\Core\Tanulmanyut;
 
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
 use Noherczeg\RestExt\Controllers\RestExtController;
-use Noherczeg\RestExt\Exceptions\ValidationException;
+use Noherczeg\RestExt\Facades\RestExt;
+use Noherczeg\RestExt\Facades\RestLinker;
+use Noherczeg\RestExt\Facades\RestResponse;
+use Noherczeg\RestExt\Providers\HttpStatus;
+use Noherczeg\RestExt\Providers\MediaType;
+use Noherczeg\RestExt\Services\AuthorizationService;
 
 class TanulmanyutakController extends RestExtController
 {
 
-    protected $tanulmanyutService;
-
-    public function __construct(TanulmanyutService $tanulmanyutService)
+    public function __construct(TanulmanyutService $service, AuthorizationService $auth)
     {
-        $this->tanulmanyutService = $tanulmanyutService;
+        parent::__construct();
+        $this->service = $service;
+        $this->authorizationService = $auth;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
     public function index()
     {
-        return Response::json($this->tanulmanyutService->all());
+        if ($this->pageParam())
+            $this->service->enablePagination(10);
+
+        $resource = RestExt::from($this->service->all())->links()->create(true);
+
+        $resource->addLink(RestLinker::createParentLink());
+
+        return RestResponse::sendResource($resource);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store()
-    {
-
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id            
-     * @return Response
-     */
     public function show($id)
     {
-        $szemely = $this->tanulmanyutService->findById($id);
-        
-        if ($szemely == null)
-            return Response::json([
-                'reason' => 'not found'
-            ], 404);
-        
-        return Response::json($szemely, 200);
+        $szak = $this->service->findByIdWithAll($id);
+
+        $resource = RestExt::from($szak)->links()->create(true);
+        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLinks(RestLinker::linksToEntityRelations($szak));
+
+        return RestResponse::sendResource($resource);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param int $id            
-     * @return Response
-     */
-    public function edit($id)
+    public function store()
     {
-        //
+        $this->consume([MediaType::APPLICATION_JSON]);
+        $this->service->save(Input::json()->all());
+
+        return Response::make(null, HttpStatus::CREATED);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param int $id            
-     * @return Response
-     */
-    public function update($id)
+    public function update()
     {
-        try {
-            $updated = $this->tanulmanyutService->update($id, Input::json()->all());
-            return Response::json($updated->toArray());
-        } catch (ValidationException $ex) {
-            App::abort(500, $ex->getMessage());
-        }
+        return $this->service->update(Input::json()->all());
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id            
-     * @return Response
-     */
     public function destroy($id)
     {
-        //
+        $this->service->delete($id);
+
+        return Response::make(null, HttpStatus::OK);
     }
+
 }

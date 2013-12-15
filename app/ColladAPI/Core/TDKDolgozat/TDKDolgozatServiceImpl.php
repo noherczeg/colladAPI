@@ -1,7 +1,6 @@
-<?php namespace ColladAPI\Services;
+<?php namespace ColladAPI\Core\TDKDolgozat;
 
-use ColladAPI\Repositories\TDKDolgozatRepository;
-use ColladAPI\Services\CRUDServiceImpl;
+use ColladAPI\Core\Rest\CRUDServiceImpl;
 
 class TDKDolgozatServiceImpl extends CRUDServiceImpl implements TDKDolgozatService {
 
@@ -10,4 +9,8 @@ class TDKDolgozatServiceImpl extends CRUDServiceImpl implements TDKDolgozatServi
         $this->repository = $tdkDolgozatRepository;
     }
 
+    public function findByIdWithAll($id)
+    {
+        return $this->repository->findByIdWithAll($id);
+    }
 }

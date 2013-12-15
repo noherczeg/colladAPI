@@ -4,4 +4,6 @@ use ColladAPI\Core\Rest\CRUDService;
 
 interface TanulmanyutService extends CRUDService {
 
+    public function findByIdWithAll($id);
+
 }

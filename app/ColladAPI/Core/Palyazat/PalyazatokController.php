@@ -26,16 +26,6 @@ class PalyazatokController extends RestExtController {
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @return Response
@@ -66,17 +56,6 @@ class PalyazatokController extends RestExtController {
             return Response::json(['reason' => 'not found'], 404);
 
         return Response::json($palyazat, 200);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**

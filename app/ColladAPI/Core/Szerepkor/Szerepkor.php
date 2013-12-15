@@ -25,4 +25,9 @@ class Szerepkor extends ResourceEloquentEntity implements ResourceEntity {
     public function szemelyek() {
         return $this->belongsToMany('ColladAPI\\Core\\Szemely\\Szemely', 'szemely_has_szerepkor', 'szerepkor_id', 'szemely_id');
     }
+
+    public function scopeWithAll($query)
+    {
+        return $query->with('szemelyek');
+    }
 }

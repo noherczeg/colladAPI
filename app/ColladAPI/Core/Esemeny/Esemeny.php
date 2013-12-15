@@ -44,4 +44,14 @@ class Esemeny extends ResourceEloquentEntity implements ResourceEntity {
         return $query->with('tipus', 'szemelyek', 'palyazatok', 'kariTDKDolgozatok', 'oTDKDolgozatok');
     }
 
+    public function attachDown()
+    {
+        return $this->load('tipus');
+    }
+
+    public function attachUp()
+    {
+        return $this->load('szemelyek');
+    }
+
 }

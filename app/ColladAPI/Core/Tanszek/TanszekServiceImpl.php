@@ -13,4 +13,9 @@ class TanszekServiceImpl extends CRUDServiceImpl implements TanszekService {
     {
         return $this->repository->allForSzemely($id);
     }
+
+    public function findByIdWithAll($id)
+    {
+        return $this->repository->findByIdWithAll($id);
+    }
 }

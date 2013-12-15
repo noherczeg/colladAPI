@@ -1,4 +1,4 @@
-<?php namespace ColladAPI\Core\Szervezet;
+<?php namespace ColladAPI\Core\TDKDolgozat;
 
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
@@ -10,9 +10,9 @@ use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
 use Noherczeg\RestExt\Services\AuthorizationService;
 
-class SzervezetekController extends RestExtController {
+class TDKDolgozatokController extends RestExtController {
 
-    public function __construct(SzervezetService $service, AuthorizationService $auth)
+    public function __construct(TDKDolgozatService $service, AuthorizationService $auth)
     {
         parent::__construct();
         $this->service = $service;

@@ -13,4 +13,9 @@ class TanszekEloquentRepository extends RestExtRepository implements TanszekRepo
     {
         // TODO: Implement allForSzemely() method.
     }
+
+    public function findByIdWithAll($id)
+    {
+        return $this->entity->withAll()->where('id', '=', $id)->firstOrFail();
+    }
 }

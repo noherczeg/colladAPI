@@ -6,4 +6,6 @@ interface TanszekRepository extends CRUDRepository {
 
     public function allForSzemely($id);
 
+    public function findByIdWithAll($id);
+
 }

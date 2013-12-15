@@ -27,4 +27,8 @@ class Tanszek extends ResourceEloquentEntity implements ResourceEntity {
         return $this->belongsToMany('ColladAPI\\Core\\Intezet\\Intezet', 'intezet_has_tanszek', 'tanszek_id', 'intezet_id')->withPivot('kezdo_datum', 'vege_datum');
     }
 
+    public function scopeWithAll($query)
+    {
+        return $query->with('szemelyek', 'bevetelek', 'intezetek');
+    }
 }

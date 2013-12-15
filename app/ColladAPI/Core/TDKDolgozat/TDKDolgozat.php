@@ -25,23 +25,28 @@ class TDKDolgozat extends ResourceEloquentEntity implements ResourceEntity {
     ];
 
     public function supervisedBySzemely() {
-        return $this->belongsToMany('ColladAPI\\Entities\\Szemely', 'szemely_supervise_tdkdolgozat', 'tdkdolgozat_id', 'szemely_id');
+        return $this->belongsToMany('ColladAPI\\Core\\Szemely\\Szemely', 'szemely_supervise_tdkdolgozat', 'tdkdolgozat_id', 'szemely_id');
     }
 
     public function kariEsemeny() {
-        return $this->belongsTo('ColladAPI\\Entities\\Esemeny');
+        return $this->belongsTo('ColladAPI\\Core\\Esemeny\\Esemeny');
     }
 
     public function otdkEsemeny() {
-        return $this->belongsTo('ColladAPI\\Entities\\Esemeny');
+        return $this->belongsTo('ColladAPI\\Core\\Esemeny\\Esemeny');
     }
 
     public function kariSzekcio() {
-        return $this->belongsTo('ColladAPI\\Entities\\TDKDolgozatSzekcio');
+        return $this->belongsTo('ColladAPI\\Core\\TDKDolgozat\\TDKDolgozatSzekcio');
     }
 
     public function otdkTagozat() {
-        return $this->belongsTo('ColladAPI\\Entities\\TDKDolgozatTagozat');
+        return $this->belongsTo('ColladAPI\\Core\\TDKDolgozat\\TDKDolgozatTagozat');
+    }
+
+    public function scopeWithAll($query)
+    {
+        return $query->with('kariSzekcio', 'otdkTagozat', 'otdkEsemeny', 'kariEsemeny');
     }
 
 }

@@ -23,6 +23,7 @@ App::bind('ColladAPI\Core\Bevetel\BevetelRepository',           'ColladAPI\Core\
 App::bind('ColladAPI\Core\Intezet\IntezetRepository',           'ColladAPI\Core\Intezet\IntezetEloquentRepository');
 App::bind('ColladAPI\Core\Intezmeny\IntezmenyRepository',       'ColladAPI\Core\Intezmeny\IntezmenyEloquentRepository');
 App::bind('ColladAPI\Core\Kepzes\KepzesSzintRepository',        'ColladAPI\Core\Kepzes\KepzesSzintEloquentRepository');
+App::bind('ColladAPI\Core\Szak\SzakRepository',                 'ColladAPI\Core\Szak\SzakEloquentRepository');
 
 /** Servicek */
 App::bind('ColladAPI\Core\Szemely\SzemelyService',              'ColladAPI\Core\Szemely\SzemelyServiceImpl');

@@ -30,4 +30,9 @@ class Tanulmanyut extends ResourceEloquentEntity implements ResourceEntity {
         return $this->belongsTo('ColladAPI\\Core\\Orszag\\Orszag');
     }
 
+    public function scopeWithAll($query)
+    {
+        return $query->with('orszag', 'szemelyek', 'tipus');
+    }
+
 }

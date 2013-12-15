@@ -1,120 +1,66 @@
 <?php namespace ColladAPI\Core\Tanszek;
 
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Http\Response;
 use Noherczeg\RestExt\Controllers\RestExtController;
-use Noherczeg\RestExt\Exceptions\ErrorMessageException;
-use Noherczeg\RestExt\Exceptions\ValidationException;
+use Noherczeg\RestExt\Facades\RestExt;
+use Noherczeg\RestExt\Facades\RestLinker;
+use Noherczeg\RestExt\Facades\RestResponse;
+use Noherczeg\RestExt\Providers\HttpStatus;
+use Noherczeg\RestExt\Providers\MediaType;
+use Noherczeg\RestExt\Services\AuthorizationService;
 
 class TanszekekController extends RestExtController {
 
-    protected $tanszekService;
-
-    public function __construct(TanszekService $tanszekService)
+    public function __construct(TanszekService $service, AuthorizationService $auth)
     {
         parent::__construct();
-        $this->tanszekService = $tanszekService;
+        $this->service = $service;
+        $this->authorizationService = $auth;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
     public function index()
     {
-        $this->enableLinks(true);
+        if ($this->pageParam())
+            $this->service->enablePagination(10);
 
-        $resource = $this->createResource($this->tanszekService->all());
+        $resource = RestExt::from($this->service->all())->links()->create(true);
 
-        return $this->sendResource($resource);
+        $resource->addLink(RestLinker::createParentLink());
+
+        return RestResponse::sendResource($resource);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store()
-    {
-        try {
-            $tanszek = $this->tanszekService->save(Input::json()->all());
-            return Response::json($tanszek->toArray(), 201);
-        } catch(ValidationException $ex) {
-            App::abort(500, $ex->getMessage());
-        } catch(ErrorMessageException $exy) {
-            App::abort(500, $exy->getMessage());
-        }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
     public function show($id)
     {
-        $this->enableLinks(true);
+        $szak = $this->service->findByIdWithAll($id);
 
-        $resource = null;
+        $resource = RestExt::from($szak)->links()->create(true);
+        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLinks(RestLinker::linksToEntityRelations($szak));
 
-        if (!is_null(Request::query('date'))) {
-            $resource = $this->createResource($this->tanszekService->szemelyekByDate($id, new DateTime(Request::query('date'))));
-        } else {
-            $resource = $this->createResource($this->tanszekService->findById($id));
-        }
-
-
-        return $this->sendResource($resource);
+        return RestResponse::sendResource($resource);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function edit($id)
+    public function store()
     {
-        //
+        $this->consume([MediaType::APPLICATION_JSON]);
+        $this->service->save(Input::json()->all());
+
+        return Response::make(null, HttpStatus::CREATED);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function update($id)
+    public function update()
     {
-        try {
-            $updated = $this->tanszekService->update($id, Input::json()->all());
-            return Response::json($updated->toArray());
-        } catch(ValidationException $ex) {
-            App::abort(500, $ex->getMessage());
-        }
+        return $this->service->update(Input::json()->all());
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
     public function destroy($id)
     {
-        $this->tanszekService->delete($id);
+        $this->service->delete($id);
+
+        return Response::make(null, HttpStatus::OK);
     }
 
 }

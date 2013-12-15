@@ -9,14 +9,8 @@ class TanulmanyutEloquentRepository extends RestExtRepository implements Tanulma
         $this->entity = $tanulmanyut;
     }
 
-    public function all()
+    public function findByIdWithAll($id)
     {
-        return $this->entity->with('tipus', 'orszag')->get();
+        return $this->entity->withAll()->where('id', '=', $id)->firstOrFail();
     }
-
-    public function findById($entityId)
-    {
-        return $this->entity->with('tipus', 'orszag')->findOrFail($entityId);
-    }
-
 }

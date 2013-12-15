@@ -1,4 +1,4 @@
-<?php namespace ColladAPI\Core\Szervezet;
+<?php namespace ColladAPI\Core\Szak;
 
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
@@ -10,21 +10,21 @@ use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
 use Noherczeg\RestExt\Services\AuthorizationService;
 
-class SzervezetekController extends RestExtController {
+class SzakokController extends RestExtController {
 
-    public function __construct(SzervezetService $service, AuthorizationService $auth)
+    public function __construct(SzakRepository $repo, AuthorizationService $auth)
     {
         parent::__construct();
-        $this->service = $service;
+        $this->repository = $repo;
         $this->authorizationService = $auth;
     }
 
     public function index()
     {
         if ($this->pageParam())
-            $this->service->enablePagination(10);
+            $this->repository->enablePagination(10);
 
-        $resource = RestExt::from($this->service->all())->links()->create(true);
+        $resource = RestExt::from($this->repository->all())->links()->create(true);
 
         $resource->addLink(RestLinker::createParentLink());
 
@@ -33,7 +33,7 @@ class SzervezetekController extends RestExtController {
 
     public function show($id)
     {
-        $szak = $this->service->findByIdWithAll($id);
+        $szak = $this->repository->findByIdWithAll($id);
 
         $resource = RestExt::from($szak)->links()->create(true);
         $resource->addLink(RestLinker::createParentLink());
@@ -45,19 +45,19 @@ class SzervezetekController extends RestExtController {
     public function store()
     {
         $this->consume([MediaType::APPLICATION_JSON]);
-        $this->service->save(Input::json()->all());
+        $this->repository->save(Input::json()->all());
 
         return Response::make(null, HttpStatus::CREATED);
     }
 
     public function update()
     {
-        return $this->service->update(Input::json()->all());
+        return $this->repository->update(Input::json()->all());
     }
 
     public function destroy($id)
     {
-        $this->service->delete($id);
+        $this->repository->delete($id);
 
         return Response::make(null, HttpStatus::OK);
     }

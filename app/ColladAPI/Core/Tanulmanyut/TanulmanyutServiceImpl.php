@@ -9,4 +9,8 @@ class TanulmanyutServiceImpl extends CRUDServiceImpl implements TanulmanyutServi
         $this->repository = $tanulmanyutRepository;
     }
 
+    public function findByIdWithAll($id)
+    {
+        return $this->repository->findByIdWithAll($id);
+    }
 }

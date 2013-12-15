@@ -1,13 +1,9 @@
-<?php
-/**
- * Created by Norbert Csaba Herczeg.
- * Date: 10/4/13
- * Time: 12:06 AM
- */
+<?php namespace ColladAPI\Core\TDKDolgozat;
 
-namespace ColladAPI\Services;
-
+use ColladAPI\Core\Rest\CRUDService;
 
 interface TDKDolgozatService extends CRUDService {
+
+    public function findByIdWithAll($id);
 
 }

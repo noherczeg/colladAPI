@@ -1,8 +1,8 @@
-<?php namespace ColladAPI\Core\Szerepkor;
+<?php namespace ColladAPI\Core\Szak;
 
 use Noherczeg\RestExt\Repository\CRUDRepository;
 
-interface SzerepkorRepository extends CRUDRepository {
+interface SzakRepository extends CRUDRepository {
 
     public function findByIdWithAll($id);
 

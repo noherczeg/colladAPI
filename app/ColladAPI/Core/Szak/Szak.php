@@ -24,4 +24,9 @@ class Szak extends ResourceEloquentEntity implements ResourceEntity {
     public function kepzesSzint() {
         return $this->belongsTo('ColladAPI\\Core\\Kepzes\\KepzesSzint');
     }
+
+    public function scopeWithAll($query)
+    {
+        return $query->with('szemelyek', 'kepzesSzint');
+    }
 }

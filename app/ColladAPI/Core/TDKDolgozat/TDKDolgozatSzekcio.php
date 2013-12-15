@@ -1,17 +1,13 @@
-<?php
-/**
- * Created by Norbert Csaba Herczeg.
- * Date: 9/26/13
- * Time: 2:54 AM
- */
+<?php namespace ColladAPI\Core\TDKDolgozat;
 
-namespace ColladAPI\Entities;
+use Noherczeg\RestExt\Entities\ResourceEloquentEntity;
+use Noherczeg\RestExt\Entities\ResourceEntity;
 
-use ColladAPI\Entities\ColladEntity;
-
-class TDKDolgozatSzekcio extends ColladEntity {
+class TDKDolgozatSzekcio extends ResourceEloquentEntity implements ResourceEntity {
 
     protected $table = "tdkdolgozat_szekcio";
+
+    protected $rootRelName = 'tdkdolgozatszekciok';
 
     protected $fillable = ['nev', 'megjegyzes'];
 
@@ -26,6 +22,11 @@ class TDKDolgozatSzekcio extends ColladEntity {
 
     public function oTDKDolgozatok() {
         return $this->hasMany('ColladAPI\\Entities\\TDKDolgozat', 'otdk_szekcio_id');
+    }
+
+    public function scopeWithAll($query)
+    {
+        return $query->with('kariTDKDolgozatok', 'oTDKDolgozatok');
     }
 
 }

@@ -23,4 +23,10 @@ class TudomanyTerulet extends ResourceEloquentEntity implements ResourceEntity {
     public function palyazatok() {
         return $this->belongsTo('ColladAPI\\Entities\\Palyazat', 'palyazat_has_tudomanyterulet', 'tudomanyterulet_id', 'palyazat_id');
     }
+
+    public function scopeWithAll($query)
+    {
+        return $query->with('palyazatok', 'fokozatok');
+    }
+
 }
