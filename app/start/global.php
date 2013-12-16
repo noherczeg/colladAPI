@@ -1,6 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
+
 /*
 |--------------------------------------------------------------------------
 | Register The Laravel Class Loader

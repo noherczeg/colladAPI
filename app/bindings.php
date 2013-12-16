@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\App;
 
 /** Repositoryk */
 App::bind('ColladAPI\Core\Szemely\SzemelyRepository',           'ColladAPI\Core\Szemely\SzemelyEloquentRepository');

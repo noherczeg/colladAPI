@@ -7,6 +7,8 @@ class PalyazatStatusz extends ResourceEloquentEntity implements ResourceEntity {
 
     protected $table = "palyazat_statusz";
 
+    protected $rootRelName = 'palyazatstatuszok';
+
     protected $fillable = ['nev'];
 
     protected $rules = [

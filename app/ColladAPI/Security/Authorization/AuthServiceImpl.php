@@ -1,8 +1,6 @@
-<?php
+<?php namespace ColladAPI\Security\Authorization;
 
-namespace ColladAPI\Security\Authorization;
-
-
+use Illuminate\Support\Facades\Auth;
 use Noherczeg\RestExt\Services\AuthorizationService;
 
 class AuthServiceImpl implements AuthorizationService {
@@ -14,7 +12,7 @@ class AuthServiceImpl implements AuthorizationService {
     public function __construct()
     {
         // get the roles for the current user
-        $rolesTmp = \Auth::user()->with('roles')->where('id', \Auth::user()->id)->firstOrFail()->getRelation('roles')->toArray();
+        $rolesTmp = Auth::user()->with('roles')->where('id', Auth::user()->id)->firstOrFail()->getRelation('roles')->toArray();
 
         foreach ($rolesTmp as $role) {
             $this->roles[] = $role[$this->rolesFieldName];

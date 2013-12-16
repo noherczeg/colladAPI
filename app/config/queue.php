@@ -57,4 +57,9 @@ return array(
 
 	),
 
+    // 4.1 feature
+    'failed' => array(
+        'database' => 'mysql', 'table' => 'failed_jobs',
+    ),
+
 );

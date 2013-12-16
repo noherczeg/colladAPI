@@ -43,4 +43,4 @@ class PublikaciokNyelvekController extends RestExtController {
         return Response::make(null, HttpStatus::OK);
     }
 
-} 
+}

@@ -67,7 +67,12 @@ class Palyazat extends ResourceEloquentEntity implements ResourceEntity {
     }
 
     public function tudomanyteruletek() {
-        return $this->belongsTo('ColladAPI\\Core\\Tudomanyterulet\\TudomanyTerulet', 'palyazat_has_tudomanyterulet', 'palyazat_id', 'tudomanyterulet_id');
+        return $this->belongsToMany('ColladAPI\\Core\\Tudomanyterulet\\TudomanyTerulet', 'palyazat_has_tudomanyterulet', 'palyazat_id', 'tudomanyterulet_id');
+    }
+
+    public function scopeWithAll($query)
+    {
+        return $query->with('bevetelek', 'orszag', 'statusz', 'tipus', 'alkotasok', 'esemenyek', 'intezmenyek', 'publikaciok', 'szemelyek', 'szerepkorok', 'tudomanyteruletek');
     }
 
 }

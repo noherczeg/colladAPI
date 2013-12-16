@@ -9,4 +9,18 @@ class PalyazatServiceImpl extends CRUDServiceImpl implements PalyazatService {
         $this->repository = $palyazatRepository;
     }
 
+    public function findByIdWithAll($id)
+    {
+        return $this->repository->findByIdWithAll($id);
+    }
+
+    public function findPublikacioForPalyazat($palyazatId, $pubId)
+    {
+        return $this->repository->findPublikacioForPalyazat($palyazatId, $pubId);
+    }
+
+    public function findPublikaciokForPalyazat($palyazatId)
+    {
+        return $this->repository->findPublikaciokForPalyazat($palyazatId);
+    }
 }

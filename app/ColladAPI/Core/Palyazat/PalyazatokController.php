@@ -3,86 +3,65 @@
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
 use Noherczeg\RestExt\Controllers\RestExtController;
-use Noherczeg\RestExt\Exceptions\ErrorMessageException;
-use Noherczeg\RestExt\Exceptions\ValidationException;
+use Noherczeg\RestExt\Facades\RestExt;
+use Noherczeg\RestExt\Facades\RestLinker;
+use Noherczeg\RestExt\Facades\RestResponse;
+use Noherczeg\RestExt\Providers\HttpStatus;
+use Noherczeg\RestExt\Providers\MediaType;
+use Noherczeg\RestExt\Services\AuthorizationService;
 
 class PalyazatokController extends RestExtController {
 
     protected $palyazatService;
 
-    public function __construct(PalyazatService $palyazatService)
+    public function __construct(PalyazatService $service, AuthorizationService $auth)
     {
-        $this->palyazatService = $palyazatService;
+        parent::__construct();
+        $this->palyazatService = $service;
+        $this->authorizationService = $auth;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
     public function index()
     {
-        return Response::json($this->palyazatService->all());
+        if ($this->pageParam())
+            $this->palyazatService->enablePagination(10);
+
+        $resource = RestExt::from($this->palyazatService->all())->links()->create(true);
+
+        $resource->addLink(RestLinker::createParentLink());
+
+        return RestResponse::sendResource($resource);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return Response
-     */
-    public function store()
-    {
-        try {
-            $palyazat = $this->palyazatService->save(Input::json()->all());
-            return Response::json($palyazat->toArray(), 201);
-        } catch(ValidationException $ex) {
-            App::abort(500, $ex->getMessage());
-        } catch(ErrorMessageException $exy) {
-            App::abort(500, $exy->getMessage());
-        }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
     public function show($id)
     {
-        $palyazat = $this->palyazatService->findById($id);
+        $publikacio = $this->palyazatService->findByIdWithAll($id);
 
-        if ($palyazat == null)
-            return Response::json(['reason' => 'not found'], 404);
+        $resource = RestExt::from($publikacio)->links()->create(true);
+        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLinks(RestLinker::linksToEntityRelations($publikacio));
 
-        return Response::json($palyazat, 200);
+        return RestResponse::sendResource($resource);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function update($id)
+    public function store()
     {
-        try {
-            $updated = $this->palyazatService->update($id, Input::json()->all());
-            return Response::json($updated->toArray());
-        } catch(ValidationException $ex) {
-            App::abort(500, $ex->getMessage());
-        }
+        $this->consume([MediaType::APPLICATION_JSON]);
+        $this->palyazatService->save(Input::json()->all());
+
+        return Response::make(null, HttpStatus::CREATED);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
+    public function update()
+    {
+        return $this->palyazatService->update(Input::json()->all());
+    }
+
     public function destroy($id)
     {
-        //
+        $this->palyazatService->delete($id);
+
+        return Response::make(null, HttpStatus::OK);
     }
 
 }

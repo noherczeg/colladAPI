@@ -17,37 +17,31 @@ use Noherczeg\RestExt\Facades\RestExt;
 
 Route::get('/', function()
 {
+    $rep = new \ColladAPI\Core\Palyazat\PalyazatEloquentRepository(new \ColladAPI\Core\Palyazat\Palyazat());
 
-    //$pivotData = array();
+    // belongsTo
+    //$rep->associate(4, 'ColladAPI\Core\Orszag\Orszag', 2);
 
-    // relate($modelName, $modelId, array $pivotData)
-    /*$parent = \ColladAPI\Core\Publikacio\Publikacio::findOrFail(1);
+    // belongsToMany
+    //$rep->attach(4, 'ColladAPI\Core\Intezmeny\Intezmeny', 1, array('megjegyzes' => 'asdasdsd'));
 
-    $modelName = '\ColladAPI\Core\Palyazat\Palyazat';
-    $modelId = 3;
+    //$rep->detach(4, 'ColladAPI\Core\Intezmeny\Intezmeny', 1);
 
-    $modelToAttach = $modelName::findOrFail($modelId);
-    $relToAttach = $modelToAttach->getRootRelName();
-
-    $relationInstance = $parent->$relToAttach();
-    dd($relationInstance);
-
-    if ($relationInstance instanceof \Illuminate\Database\Eloquent\Relations\BelongsToMany || $relationInstance instanceof $relationInstance instanceof \Illuminate\Database\Eloquent\Relations\HasOneOrMany) {
-        $relationInstance->save($modelToAttach, $pivotData);
-    }
-
-
-    dd($pub->load('palyazatok')->getRelation('palyazatok'));*/
     return Redirect::to('/v1', 301);
 });
 
 Route::group(array('prefix' => RestExt::getVersion(), 'before' => 'api.auth'), function()
 {
+
     // ENTRY POINT
-    Route::get('/','ColladAPI\Core\Rest\RootController@discover');
+    Route::get('/','\ColladAPI\Core\Rest\RootController@discover');
 
     // BERUHAZASOK
     Route::resource('beruhazasok', 'ColladAPI\Core\Beruhazas\BeruhazasokController', array('except' => array('create', 'edit')));
+
+    // PALYAZATOK
+    Route::resource('palyazatok', 'ColladAPI\Core\Palyazat\PalyazatokController', array('except' => array('create', 'edit')));
+    Route::resource('palyazatok.publikaciok', 'ColladAPI\Core\Palyazat\PalyazatokPublikaciokController', array('except' => array('create', 'edit')));
 
     // DIJAK
     Route::resource('dijak', 'ColladAPI\Core\Dij\DijakController', array('except' => array('create', 'edit')));

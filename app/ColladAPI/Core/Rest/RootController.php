@@ -1,19 +1,22 @@
 <?php namespace ColladAPI\Core\Rest;
 
 use Noherczeg\RestExt\Controllers\RestExtController;
-use Noherczeg\RestExt\Facades\RestLinker;
 use Noherczeg\RestExt\Http\Resource;
 use Noherczeg\RestExt\Facades\RestResponse;
+use Noherczeg\RestExt\Services\AuthorizationService;
 use Noherczeg\RestExt\Services\Linker;
 
 class RootController extends RestExtController {
 
     private $linker;
 
-    public function __construct(Linker $linker)
+    protected $authorizationService;
+
+    public function __construct(Linker $linker, AuthorizationService $auth)
     {
         parent::__construct();
         $this->linker = $linker;
+        $this->authorizationService = $auth;
     }
 
     public function discover()
@@ -21,6 +24,7 @@ class RootController extends RestExtController {
         $resource = new Resource();
 
         $resource->addLink($this->linker->createLinkToFirstPage('beruhazasok'));
+        $resource->addLink($this->linker->createLinkToFirstPage('palyazatok'));
         $resource->addLink($this->linker->createLinkToFirstPage('dijak'));
         $resource->addLink($this->linker->createLinkToFirstPage('esemenyek'));
         $resource->addLink($this->linker->createLinkToFirstPage('intezetek'));
@@ -32,11 +36,10 @@ class RootController extends RestExtController {
         $resource->addLink($this->linker->createLink('szakok'));
         $resource->addLink($this->linker->createLinkToFirstPage('tanulmanyutak'));
         $resource->addLink($this->linker->createLinkToFirstPage('tdkdolgozatok'));
-        if (\Entrust::hasRole('ADMIN')) $resource->addLink($this->linker->createLink('szerepkorok'));
+        if ($this->authorizationService->hasRole('ADMIN')) $resource->addLink($this->linker->createLink('szerepkorok'));
         $resource->addLink($this->linker->createLink('tudomanyteruletek'));
         $resource->addLink($this->linker->createLink('nyelvek'));
         $resource->addLink($this->linker->createLink('nyelvtudasok'));
-        $resource->addLink($this->linker->createLink('szerepkorok'));
         $resource->addLink($this->linker->createLink('fokozatok'));
         $resource->addLink($this->linker->createLinkToFirstPage('szervezetek'));
         $resource->addLink($this->linker->createLink('orszagok'));

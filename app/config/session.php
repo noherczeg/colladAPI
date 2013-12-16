@@ -122,4 +122,7 @@ return array(
 
 	'domain' => null,
 
+    // 4.1 feature
+    'expire_on_close' => false
+
 );

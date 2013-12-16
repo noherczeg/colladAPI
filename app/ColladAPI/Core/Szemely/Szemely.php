@@ -6,12 +6,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Noherczeg\RestExt\Entities\ResourceEloquentEntity;
 use Noherczeg\RestExt\Entities\ResourceEntity;
-use Zizaco\Entrust\HasRole;
 
 class Szemely extends ResourceEloquentEntity implements UserInterface, RemindableInterface, ResourceEntity {
-
-    /** Entrust Hozzaferesekhez */
-    use HasRole;
 
     protected $table = "szemely";
 
