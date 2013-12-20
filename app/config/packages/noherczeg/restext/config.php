@@ -94,6 +94,10 @@ return array(
 
     'page_param' => 'page',
 
+    'page_limit_param' => 'limit',
+
+    'page_limit_default' => 10,
+
     'access_policy' => 'blacklist',
 
     'version' => 'v1',

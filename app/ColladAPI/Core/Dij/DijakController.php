@@ -4,19 +4,22 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Response;
 use Noherczeg\RestExt\Controllers\RestExtController;
 use Noherczeg\RestExt\Facades\RestExt;
-use Noherczeg\RestExt\Facades\RestLinker;
 use Noherczeg\RestExt\Facades\RestResponse;
 use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
 use Noherczeg\RestExt\Services\AuthorizationService;
+use Noherczeg\RestExt\Services\Linker;
 
 class DijakController extends RestExtController {
 
-    public function __construct(DijRepository $repo, AuthorizationService $auth)
+    private $linker;
+    
+    public function __construct(DijRepository $repo, AuthorizationService $auth, Linker $linker)
     {
         parent::__construct();
         $this->repository = $repo;
         $this->authorizationService = $auth;
+        $this->linker = $linker;
     }
 
     public function index()
@@ -26,7 +29,7 @@ class DijakController extends RestExtController {
 
         $resource = RestExt::from($this->repository->all())->links()->create(true);
 
-        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLink($this->linker->createParentLink());
 
         return RestResponse::sendResource($resource);
     }
@@ -36,8 +39,8 @@ class DijakController extends RestExtController {
         $dij = $this->repository->findByIdWithAll($id);
 
         $resource = RestExt::from($dij)->links()->create(true);
-        $resource->addLink(RestLinker::createParentLink());
-        $resource->addLinks(RestLinker::linksToEntityRelations($dij));
+        $resource->addLink($this->linker->createParentLink());
+        $resource->addLinks($this->linker->linksToEntityRelations($dij));
 
         return RestResponse::sendResource($resource);
     }

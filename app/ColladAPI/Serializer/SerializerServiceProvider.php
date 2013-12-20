@@ -17,7 +17,8 @@ class SerializerServiceProvider extends ServiceProvider {
     {
         $this->app['serializer'] = $this->app->share(function($app)
         {
-            return SerializerBuilder::create()->build();
+            $builder = new SerializerBuilder();
+            return $builder->build();
         });
     }
 }

@@ -1,65 +1,65 @@
 <?php namespace ColladAPI\Core\Esemeny;
 
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Response;
 use Noherczeg\RestExt\Controllers\RestExtController;
-use Noherczeg\RestExt\Facades\RestExt;
-use Noherczeg\RestExt\Facades\RestLinker;
-use Noherczeg\RestExt\Facades\RestResponse;
 use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
 use Noherczeg\RestExt\Services\AuthorizationService;
 
 class EsemenyekController extends RestExtController {
 
+    /**
+     * @var EsemenyRepository
+     */
+    private $esemenyek;
+
     public function __construct(EsemenyRepository $repo, AuthorizationService $auth)
     {
         parent::__construct();
-        $this->repository = $repo;
+        $this->esemenyek = $repo;
         $this->authorizationService = $auth;
     }
 
     public function index()
     {
-        if ($this->pageParam())
-            $this->repository->enablePagination(10);
+        $this->setPaginationFor($this->esemenyek);
 
-        $resource = RestExt::from($this->repository->all())->links()->create(true);
+        $resource = $this->restExt->from($this->esemenyek->all())->links()->create();
 
-        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLink($this->linker->createParentLink());
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function show($id)
     {
-        $esemeny = $this->repository->findByIdWithAll($id);
+        $esemeny = $this->esemenyek->findByIdWithAll($id);
 
-        $resource = RestExt::from($esemeny)->links()->create(true);
-        $resource->addLink(RestLinker::createParentLink());
-        $resource->addLinks(RestLinker::linksToEntityRelations($esemeny));
+        $resource = $this->restExt->from($esemeny)->links()->create();
+        $resource->addLink($this->linker->createParentLink());
+        $resource->addLinks($this->linker->linksToEntityRelations($esemeny));
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function store()
     {
         $this->consume([MediaType::APPLICATION_JSON]);
-        $this->repository->save(Input::json()->all());
+        $this->esemenyek->save(Input::json()->all());
 
-        return Response::make(null, HttpStatus::CREATED);
+        return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
     }
 
-    public function update()
+    public function update($id)
     {
-        return $this->repository->update(Input::json()->all());
+        return $this->esemenyek->update($id, Input::json()->all());
     }
 
     public function destroy($id)
     {
-        $this->repository->delete($id);
+        $this->esemenyek->delete($id);
 
-        return Response::make(null, HttpStatus::OK);
+        return $this->restResponse->plainResponse(null, HttpStatus::OK);
     }
 
 } 

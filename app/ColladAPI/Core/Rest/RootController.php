@@ -2,20 +2,15 @@
 
 use Noherczeg\RestExt\Controllers\RestExtController;
 use Noherczeg\RestExt\Http\Resource;
-use Noherczeg\RestExt\Facades\RestResponse;
 use Noherczeg\RestExt\Services\AuthorizationService;
-use Noherczeg\RestExt\Services\Linker;
 
 class RootController extends RestExtController {
 
-    private $linker;
-
     protected $authorizationService;
 
-    public function __construct(Linker $linker, AuthorizationService $auth)
+    public function __construct(AuthorizationService $auth)
     {
         parent::__construct();
-        $this->linker = $linker;
         $this->authorizationService = $auth;
     }
 
@@ -46,6 +41,6 @@ class RootController extends RestExtController {
         $resource->addLink($this->linker->createLinkToFirstPage('alkotasok'));
         $resource->addLink($this->linker->createLinkToFirstPage('publikaciok'));
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 } 

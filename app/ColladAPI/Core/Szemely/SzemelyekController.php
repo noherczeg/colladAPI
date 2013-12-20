@@ -1,16 +1,16 @@
 <?php namespace ColladAPI\Core\Szemely;
 
-use Illuminate\Support\Facades\Request;
 use Noherczeg\RestExt\Controllers\RestExtController;
-use Noherczeg\RestExt\Facades\RestExt;
-use Noherczeg\RestExt\Facades\RestLinker;
 use Noherczeg\RestExt\Http\Resource;
+use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
-use Noherczeg\RestExt\Facades\RestResponse;
 
 class SzemelyekController extends RestExtController {
 
-    protected $szemelyService;
+    /**
+     * @var SzemelyRepository
+     */
+    protected $szemelyek;
 
     protected $cacheTimeMinutes = 5;
 
@@ -18,19 +18,14 @@ class SzemelyekController extends RestExtController {
 
     //protected $charset = Charset::ISO_8859_2;
 
-    public function __construct(SzemelyService $szemelyService)
+    public function __construct(SzemelyRepository $szemelyRepository)
     {
         parent::__construct();
-        $this->service = $szemelyService;
+        $this->szemelyek = $szemelyRepository;
         //$this->setPagination(2);
         //$this->allowForRoles('only', ['ADMIN']);
     }
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
 	public function index()
     {
         //Cache::forget('osszesSzemely');
@@ -43,8 +38,7 @@ class SzemelyekController extends RestExtController {
         //$this->produce([\Noherczeg\RestExt\Providers\MediaType::APPLICATION_JSON]);
 
         //$this->allowForRoles('only', ['Admin']);
-        if ($this->pageParam())
-            $this->service->enablePagination(2);
+        $this->setPaginationFor($this->szemelyek);
         //$this->setMediaType(MediaType::APPLICATION_XML);
 
 
@@ -54,85 +48,56 @@ class SzemelyekController extends RestExtController {
         });*/
 
         $resource = new Resource();
-        $atTime = new \DateTime(Request::query('in'));
+        $atTime = new \DateTime($this->request->query('in'));
         if ($atTime === null) {
             $atTime = new \DateTime();
         }
 
-        if (Request::query('type') == 'tanar') {
-            $resource = RestExt::from($this->service->findTanarokAtTime($atTime))->links()->create('szemelyek');
-        } elseif (Request::query('type') == 'hallgato') {
-            $resource = RestExt::from($this->service->findHallgatokAtTime($atTime))->links()->create('szemelyek');
+        if ($this->request->query('type') == 'tanar') {
+            $resource = $this->restExt->from($this->szemelyek->findTanarokAtTime($atTime))->links()->create('szemelyek');
+        } elseif ($this->request->query('type') == 'hallgato') {
+            $resource = $this->restExt->from($this->szemelyek->findHallgatokAtTime($atTime))->links()->create('szemelyek');
         } else {
-            $resource = RestExt::from($this->service->all(), true)->links()->create('szemelyek');
+            $resource = $this->restExt->from($this->szemelyek->all(), true)->links()->create('szemelyek');
         }
 
-        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLink($this->linker->createParentLink());
 
         //Log::info("test logolas", array('context' => 'Other helpful information'));
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
 	}
 
-	/**
-	 * Store a newly created resource in storage.
-	 *
-	 * @return Response
-	 */
 	public function store()
     {
-        try {
-            $szemely = $this->service->register(Input::json()->all());
-            return Response::json($szemely->toArray(), 201);
-        } catch(ValidationException $ex) {
-            App::abort(500, $ex->getMessage());
-        } catch(ErrorMessageException $exy) {
-            App::abort(500, $exy->getMessage());
-        }
+        $szemely = $this->szemelyek->register(Input::json()->all());
+
+        return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
 	}
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 	public function show($id)
     {
-        $szemely = $this->service->findByIdWithAll($id);
-        $resource = RestExt::from($szemely)->links()->create();
+        $szemely = $this->szemelyek->findByIdWithAll($id);
+        $resource = $this->restExt->from($szemely)->links()->create();
 
-        $resource->addLinks(RestLinker::linksToEntityRelations($szemely));
-        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLinks($this->linker->linksToEntityRelations($szemely));
+        $resource->addLink($this->linker->createParentLink());
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 	public function update($id)
     {
-        try {
-            $updated = $this->service->update($id, Input::json()->all());
-            return Response::json($updated->toArray());
-        } catch(ValidationException $ex) {
-            App::abort(500, $ex->getMessage());
-        }
+        $updated = $this->szemelyek->update($id, Input::json()->all());
+
+        return $this->restResponse->plainResponse(null, HttpStatus::OK);
 	}
 
-	/**
-	 * Remove the specified resource from storage.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
 	public function destroy($id)
     {
-		$this->service->delete($id);
+		$this->szemelyek->delete($id);
+
+        return $this->restResponse->plainResponse(null, HttpStatus::OK);
 	}
 
 }

@@ -17,7 +17,7 @@ use Noherczeg\RestExt\Facades\RestExt;
 
 Route::get('/', function()
 {
-    $rep = new \ColladAPI\Core\Palyazat\PalyazatEloquentRepository(new \ColladAPI\Core\Palyazat\Palyazat());
+    //$rep = new \ColladAPI\Core\Palyazat\PalyazatEloquentRepository(new \ColladAPI\Core\Palyazat\Palyazat());
 
     // belongsTo
     //$rep->associate(4, 'ColladAPI\Core\Orszag\Orszag', 2);
@@ -30,7 +30,7 @@ Route::get('/', function()
     return Redirect::to('/v1', 301);
 });
 
-Route::group(array('prefix' => RestExt::getVersion(), 'before' => 'api.auth'), function()
+Route::group(array('prefix' => Config::get('restext::version'), 'before' => 'api.auth'), function()
 {
 
     // ENTRY POINT

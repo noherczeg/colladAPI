@@ -50,7 +50,7 @@ Log::listen(function($level, $message, $context) {
             $apiName,
             $level,
             $message,
-            json_encode($context),
+            serialize($context),
             $date
         ));
     });
@@ -103,5 +103,6 @@ App::down(function()
 */
 
 require app_path().'/bindings.php';
+require app_path().'/events.php';
 require app_path().'/filters.php';
 require app_path().'/errors.php';

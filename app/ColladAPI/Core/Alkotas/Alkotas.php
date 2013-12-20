@@ -1,5 +1,6 @@
 <?php namespace ColladAPI\Core\Alkotas;
 
+use Illuminate\Database\Eloquent\Builder;
 use Noherczeg\RestExt\Entities\ResourceEloquentEntity;
 use Noherczeg\RestExt\Entities\ResourceEntity;
 

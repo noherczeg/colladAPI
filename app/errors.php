@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\URL;
@@ -82,4 +83,13 @@ App::error(function(ModelNotFoundException $e)
 App::error(function(\Predis\Connection\ConnectionException $e)
 {
     return Response::json(['reason' => 'a Cache szerver nem válaszol'], 500);
+});
+
+App::error(function(\Illuminate\Database\QueryException $e)
+{
+    if(App::environment() === 'local')
+        return Response::json(['reason' => $e->getMessage()], 500);
+    else
+        return Response::json(['reason' => "Database error occured"], 500);
+
 });

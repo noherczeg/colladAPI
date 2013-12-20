@@ -18,9 +18,9 @@ class CRUDServiceImpl implements CRUDService {
         return $this->repository->findById($id);
     }
 
-    public function update(array $entityData)
+    public function update($id, array $entityData)
     {
-        return $this->repository->update($entityData);
+        return $this->repository->update($id, $entityData);
     }
 
     public function delete($id)
@@ -42,5 +42,10 @@ class CRUDServiceImpl implements CRUDService {
     {
         $this->pagination = $boolValue;
         $this->repository->enablePagination($boolValue);
+    }
+
+    public function restCollection()
+    {
+        return $this->repository->restCollection();
     }
 }
