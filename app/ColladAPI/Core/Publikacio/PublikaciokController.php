@@ -2,97 +2,92 @@
 
 use ColladAPI\Core\Nyelv\NyelvRepository;
 use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Response;
 use Noherczeg\RestExt\Controllers\RestExtController;
-use Noherczeg\RestExt\Facades\RestExt;
-use Noherczeg\RestExt\Facades\RestLinker;
-use Noherczeg\RestExt\Facades\RestResponse;
 use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
 use Noherczeg\RestExt\Services\AuthorizationService;
 
 class PublikaciokController extends RestExtController {
 
-    private $repository;
+    private $publikaciok;
 
-    private $nyelvRepository;
+    private $nyelvek;
 
     public function __construct(PublikacioRepository $repo, NyelvRepository $nyelvRepository, AuthorizationService $auth)
     {
         parent::__construct();
-        $this->repository = $repo;
-        $this->nyelvRepository = $nyelvRepository;
+        $this->publikaciok = $repo;
+        $this->nyelvek = $nyelvRepository;
         $this->authorizationService = $auth;
     }
 
     public function index()
     {
         if ($this->pageParam())
-            $this->repository->enablePagination(10);
+            $this->publikaciok->enablePagination(10);
 
-        $all = $this->repository->all();
+        $all = $this->publikaciok->all();
 
         // ha CSV-t kernek, akkor azt adunk
         if ($this->requestAccepts() == MediaType::TEXT_CSV) {
-            return RestResponse::sendFile(RestExt::collectionToCSVString($all), 'csvtest.csv');
+            return $this->restResponse->sendFile($this->restExt->collectionToCSVString($all), 'csvtest.csv');
         }
 
-        $resource = RestExt::from($this->repository->all())->links()->create(true);
+        $resource = $this->restExt->from($this->publikaciok->all())->links()->create(true);
 
-        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLink($this->linker->createParentLink());
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function show($id)
     {
-        $publikacio = $this->repository->findByIdWithAll($id);
+        $publikacio = $this->publikaciok->findByIdWithAll($id);
 
-        $resource = RestExt::from($publikacio)->links()->create(true);
-        $resource->addLink(RestLinker::createParentLink());
-        $resource->addLinks(RestLinker::linksToEntityRelations($publikacio));
+        $resource = $this->restExt->from($publikacio)->links()->create(true);
+        $resource->addLink($this->linker->createParentLink());
+        $resource->addLinks($this->linker->linksToEntityRelations($publikacio));
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function store()
     {
         $this->consume([MediaType::APPLICATION_JSON]);
-        $this->repository->save(Input::json()->all());
+        $this->publikaciok->save(Input::json()->all());
 
-        return Response::make(null, HttpStatus::CREATED);
+        return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
     }
 
-    public function update()
+    public function update($id)
     {
-        return $this->repository->update(Input::json()->all());
+        return $this->publikaciok->update($id, Input::json()->all());
     }
 
     public function destroy($id)
     {
-        $this->repository->delete($id);
+        $this->publikaciok->delete($id);
 
-        return Response::make(null, HttpStatus::OK);
+        return $this->restResponse->plainResponse(null, HttpStatus::OK);
     }
 
     public function showNyelv($pubId, $nyelvId)
     {
-        $nyelv = $this->repository->findNyelvForPublikacio($pubId, $nyelvId);
+        $nyelv = $this->publikaciok->findNyelvForPublikacio($pubId, $nyelvId);
 
-        $resource = RestExt::from($nyelv)->links()->create(true);
-        $resource->addLink(RestLinker::createLinkUp('parent', 2));
+        $resource = $this->restExt->from($nyelv)->links()->create(true);
+        $resource->addLink($this->linker->createLinkUp('parent', 2));
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function addNyelv($pubId)
     {
         // nem letezo nyelvet nem lehet hozzaadni, ezert a postolt adatokbol nekunk csak az id kell
-        $nyelv = $this->nyelvRepository->findById(Input::get('id'));
-        $this->repository->addNyelvForPublikacio($pubId, $nyelv);
+        $nyelv = $this->nyelvek->findById(Input::get('id'));
+        $this->publikaciok->addNyelvForPublikacio($pubId, $nyelv);
 
-        return Response::make(null, HttpStatus::OK);
+        return $this->restResponse->plainResponse(null, HttpStatus::OK);
     }
 
 } 
