@@ -90,6 +90,6 @@ App::error(function(\Illuminate\Database\QueryException $e)
     if(App::environment() === 'local')
         return Response::json(['reason' => $e->getMessage()], 500);
     else
-        return Response::json(['reason' => "Database error occured"], 500);
+        return Response::json(['reason' => "Adatbázis hiba lépett fel"], 500);
 
 });
