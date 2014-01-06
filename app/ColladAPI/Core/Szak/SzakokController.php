@@ -42,14 +42,16 @@ class SzakokController extends RestExtController {
     public function store()
     {
         $this->consume([MediaType::APPLICATION_JSON]);
-        $this->szakok->save($this->request->json()->all());
+        $szak = $this->szakok->save($this->request->json()->all());
 
-        return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
+        return $this->restResponse->plainResponse($szak->toArray(), HttpStatus::CREATED);
     }
 
     public function update($id)
     {
-        return $this->szakok->update($id, $this->request->json()->all());
+        $szak = $this->szakok->update($id, $this->request->json()->all());
+
+        return $this->restResponse->plainResponse($szak->toArray(), HttpStatus::OK);
     }
 
     public function destroy($id)

@@ -35,12 +35,12 @@ App::before(function($request)
 |
 */
 
-Route::filter('auth', function()
+/*Route::filter('auth', function()
 {
-	if (Auth::guest()) return Redirect::guest('login');
-});
+	if (Auth::guest()) App::abort(\Noherczeg\RestExt\Providers\HttpStatus::FORBIDDEN);
+});*/
 
-
+/*
 Route::filter('auth.basic', function()
 {
 	return Auth::basic();
@@ -49,9 +49,9 @@ Route::filter('auth.basic', function()
 Route::filter('basic.once', function()
 {
     return Auth::onceBasic();
-});
+});*/
 
-Route::filter('api.auth', function()
+/*Route::filter('api.auth', function()
 {
     if (!Request::getUser())
     {
@@ -60,13 +60,13 @@ Route::filter('api.auth', function()
 
     $user = Szemely::where('api_kulcs', '=', Request::getUser())->first();
 
-    if (!$user)
+    if (!Auth::check())
     {
         App::abort(401);
     }
 
     Auth::login($user);
-});
+});*/
 
 /*
 |--------------------------------------------------------------------------

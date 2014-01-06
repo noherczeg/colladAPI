@@ -1,7 +1,9 @@
 <?php namespace ColladAPI\Security\Authorization;
 
 use Illuminate\Support\Facades\Auth;
+use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Services\AuthorizationService;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AuthServiceImpl implements AuthorizationService {
 
@@ -11,11 +13,15 @@ class AuthServiceImpl implements AuthorizationService {
 
     public function __construct()
     {
-        // get the roles for the current user
-        $rolesTmp = Auth::user()->with('roles')->where('id', Auth::user()->id)->firstOrFail()->getRelation('roles')->toArray();
+        // Check if there is a logged in user or not
+        if($this->isLoggedIn()) {
 
-        foreach ($rolesTmp as $role) {
-            $this->roles[] = $role[$this->rolesFieldName];
+            // get the roles for the current user
+            $rolesTmp = Auth::user()->with('roles')->where('id', Auth::user()->id)->firstOrFail()->getRelation('roles')->toArray();
+
+            foreach ($rolesTmp as $role) {
+                $this->roles[] = $role[$this->rolesFieldName];
+            }
         }
     }
 
@@ -46,5 +52,13 @@ class AuthServiceImpl implements AuthorizationService {
         if (in_array($role, $this->roles))
             return true;
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    private function isLoggedIn()
+    {
+        return Auth::check();
     }
 }

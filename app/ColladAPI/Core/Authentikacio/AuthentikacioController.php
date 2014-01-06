@@ -1,20 +1,19 @@
 <?php namespace ColladAPI\Core\Authentikacio;
 
-use Illuminate\Auth\Guard;
-use Illuminate\Support\Facades\App;
+use ColladAPI\Security\Authentication\AuthenticationService;
+use Illuminate\Support\Facades\Auth;
 use Noherczeg\RestExt\Controllers\RestExtController;
 use Noherczeg\RestExt\Providers\HttpStatus;
-use Noherczeg\RestExt\Providers\MediaType;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AuthentikacioController extends RestExtController {
 
-    /** @var Guard Authentikacio Service */
-    private $auth;
+    private $authentication;
 
-    public function __construct()
+    public function __construct(AuthenticationService $as)
     {
-        $this->auth = App::make('guard');
+        parent::__construct();
+        $this->authentication = $as;
     }
 
     /**
@@ -25,12 +24,14 @@ class AuthentikacioController extends RestExtController {
      */
     public function login()
     {
-        $this->consume([MediaType::APPLICATION_JSON]);
 
-        if (!$this->auth->attempt(array('email' => $this->request->json('email'), 'password' => $this->request->json('password'))))
+        if ($this->request->getContentType() !== 'json')
+            $this->authentication->authenticateBasic();
+
+        if (!Auth::attempt(array('email' => $this->request->json('email'), 'password' => $this->request->json('password'))))
             throw new HttpException(HttpStatus::UNAUTHORIZED);
 
-        return $this->restResponse->plainResponse(null, HttpStatus::OK);
+        return $this->restResponse->plainResponse('Sikeresen belépett!', HttpStatus::OK);
     }
 
     /**
@@ -38,7 +39,7 @@ class AuthentikacioController extends RestExtController {
      */
     public function logout()
     {
-        $this->auth->logout();
+        Auth::logout();
     }
 
 }

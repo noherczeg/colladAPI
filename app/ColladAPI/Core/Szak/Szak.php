@@ -12,7 +12,7 @@ class Szak extends ResourceEloquentEntity implements ResourceEntity {
     protected $fillable = ['nev', 'kepzesszint_id'];
 
     protected $rules = [
-        'nev' => 'required|alpha_num|between:2,256'
+        'nev' => 'required|between:2,128'
     ];
 
     protected $hidden  = ['pivot'];

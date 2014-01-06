@@ -87,9 +87,38 @@ App::error(function(\Predis\Connection\ConnectionException $e)
 
 App::error(function(\Illuminate\Database\QueryException $e)
 {
-    if(App::environment() === 'local')
+
+    // Ha Unique Constraintbe futna bele, akkor azt barkinek mutassa
+    if (isDuplicateEntry($e->getMessage()))
+        return Response::json(['reason' => duplicateEntryMessage($e->getMessage())], 409);
+
+    if(App::environment() === 'local') {
         return Response::json(['reason' => $e->getMessage()], 500);
-    else
+    } else {
         return Response::json(['reason' => "Adatbázis hiba lépett fel"], 500);
+    }
 
 });
+
+function duplicateEntryMessage($message)
+{
+    preg_match_all('/\'.*?\'/', $message, $duplicateEntryData);
+    $rawData = $duplicateEntryData[0];
+    $filtered = [];
+
+    foreach ($rawData as $data) {
+        $filtered[] = str_replace("'", "", $data);
+    }
+
+    return 'Nem lehet felvinni a kívánt elemet, a(z) "' . $filtered[0] . '" ' . $filtered[1] . ' már foglalt!';
+}
+
+function isDuplicateEntry($message)
+{
+    $constraintViolation = 'Integrity constraint violation';
+    $duplicateEntry = 'Duplicate entry';
+
+    if (strpos($message, $constraintViolation) !== false && strpos($message, $duplicateEntry) !== false)
+        return true;
+    return false;
+}

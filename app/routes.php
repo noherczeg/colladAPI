@@ -32,7 +32,7 @@ Route::get('/', function()
     return Redirect::to('/v1', 301);
 });
 
-Route::group(array('prefix' => Config::get('restext::version'), 'before' => 'api.auth'), function()
+Route::group(array('prefix' => Config::get('restext::version')/*, 'before' => 'auth'*/), function()
 {
 
     // ENTRY POINT
