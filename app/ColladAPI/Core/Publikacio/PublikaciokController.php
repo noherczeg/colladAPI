@@ -8,9 +8,17 @@ use Noherczeg\RestExt\Services\AuthorizationService;
 
 class PublikaciokController extends RestExtController {
 
+    /** @var \ColladAPI\Core\Publikacio\PublikacioRepository  */
     private $publikaciok;
 
+    /** @var \ColladAPI\Core\Nyelv\NyelvRepository  */
     private $nyelvek;
+
+    /** @var string Parameter neve, mely beallitja, hogy milyen neven keruljon kikuldesre az allomany */
+    private $publikaciokCSVFileParamName = 'file';
+
+    /** @var string Alapertelmezett nev, ha nem adnanak meg parameterben erteket */
+    private $publikaciokCSVFileDefaultName = 'csvtest.csv';
 
     public function __construct(PublikacioRepository $repo, NyelvRepository $nyelvRepository, AuthorizationService $auth)
     {
@@ -29,7 +37,11 @@ class PublikaciokController extends RestExtController {
 
         // ha CSV-t kernek, akkor azt adunk
         if ($this->requestAccepts() == MediaType::TEXT_CSV) {
-            return $this->restResponse->sendFile($this->restExt->collectionToCSVString($all), 'csvtest.csv');
+            $fileName = ($this->request->get($this->publikaciokCSVFileParamName) !== null) ?
+                    $this->request->get($this->publikaciokCSVFileParamName) :
+                    $this->publikaciokCSVFileDefaultName;
+
+            return $this->restResponse->sendFile($this->restExt->collectionToCSVString($all), $fileName);
         }
 
         $resource = $this->restExt->from($this->publikaciok->all())->links()->create(true);
