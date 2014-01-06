@@ -1,6 +1,5 @@
 <?php namespace ColladAPI\Core\Beruhazas;
 
-use Illuminate\Support\Facades\Input;
 use Noherczeg\RestExt\Controllers\RestExtController;
 use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
@@ -45,14 +44,14 @@ class BeruhazasokController extends RestExtController {
     public function store()
     {
         $this->consume([MediaType::APPLICATION_JSON]);
-        $this->beruhazasok->save(Input::json()->all());
+        $this->beruhazasok->save($this->request->json()->all());
 
         return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
     }
 
     public function update($id)
     {
-        return $this->beruhazasok->update($id, Input::json()->all());
+        return $this->beruhazasok->update($id, $this->request->json()->all());
     }
 
     public function destroy($id)

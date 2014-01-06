@@ -1,65 +1,62 @@
 <?php namespace ColladAPI\Core\Szak;
 
-use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Response;
 use Noherczeg\RestExt\Controllers\RestExtController;
-use Noherczeg\RestExt\Facades\RestExt;
-use Noherczeg\RestExt\Facades\RestLinker;
-use Noherczeg\RestExt\Facades\RestResponse;
 use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
 use Noherczeg\RestExt\Services\AuthorizationService;
 
 class SzakokController extends RestExtController {
 
+    private $szakok;
+
     public function __construct(SzakRepository $repo, AuthorizationService $auth)
     {
         parent::__construct();
-        $this->repository = $repo;
+        $this->szakok = $repo;
         $this->authorizationService = $auth;
     }
 
     public function index()
     {
         if ($this->pageParam())
-            $this->repository->enablePagination(10);
+            $this->szakok->enablePagination(10);
 
-        $resource = RestExt::from($this->repository->all())->links()->create(true);
+        $resource = $this->restExt->from($this->szakok->all())->links()->create();
 
-        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLink($this->linker->createParentLink());
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function show($id)
     {
-        $szak = $this->repository->findByIdWithAll($id);
+        $szak = $this->szakok->findByIdWithAll($id);
 
-        $resource = RestExt::from($szak)->links()->create(true);
-        $resource->addLink(RestLinker::createParentLink());
-        $resource->addLinks(RestLinker::linksToEntityRelations($szak));
+        $resource = $this->restExt->from($szak)->links()->create();
+        $resource->addLink($this->linker->createParentLink());
+        $resource->addLinks($this->linker->linksToEntityRelations($szak));
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function store()
     {
         $this->consume([MediaType::APPLICATION_JSON]);
-        $this->repository->save(Input::json()->all());
+        $this->szakok->save($this->request->json()->all());
 
-        return Response::make(null, HttpStatus::CREATED);
+        return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
     }
 
-    public function update()
+    public function update($id)
     {
-        return $this->repository->update(Input::json()->all());
+        return $this->szakok->update($id, $this->request->json()->all());
     }
 
     public function destroy($id)
     {
-        $this->repository->delete($id);
+        $this->szakok->delete($id);
 
-        return Response::make(null, HttpStatus::OK);
+        return $this->restResponse->plainResponse(null, HttpStatus::OK);
     }
 
 } 

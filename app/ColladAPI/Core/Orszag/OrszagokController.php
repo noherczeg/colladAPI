@@ -1,65 +1,61 @@
 <?php namespace ColladAPI\Core\Orszag;
 
-
-use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Response;
 use Noherczeg\RestExt\Controllers\RestExtController;
-use Noherczeg\RestExt\Facades\RestExt;
-use Noherczeg\RestExt\Facades\RestLinker;
-use Noherczeg\RestExt\Facades\RestResponse;
 use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
 use Noherczeg\RestExt\Services\AuthorizationService;
 
 class OrszagokController extends RestExtController{
 
+    private $orszagok;
+
     public function __construct(OrszagRepository $repo, AuthorizationService $auth)
     {
         parent::__construct();
-        $this->repository = $repo;
+        $this->orszagok = $repo;
         $this->authorizationService = $auth;
     }
 
     public function index()
     {
         if ($this->pageParam())
-            $this->repository->enablePagination(10);
+            $this->orszagok->enablePagination(10);
 
-        $resource = RestExt::from($this->repository->all())->links()->create(true);
+        $resource = $this->restExt->from($this->orszagok->all())->links()->create(true);
 
-        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLink($this->linker->createParentLink());
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function show($id)
     {
-        $orszag = $this->repository->findByIdWithAll($id);
+        $orszag = $this->orszagok->findByIdWithAll($id);
 
-        $resource = RestExt::from($orszag)->links()->create(true);
-        $resource->addLink(RestLinker::createParentLink());
-        $resource->addLinks(RestLinker::linksToEntityRelations($orszag));
+        $resource = $this->restExt->from($orszag)->links()->create(true);
+        $resource->addLink($this->linker->createParentLink());
+        $resource->addLinks($this->linker->linksToEntityRelations($orszag));
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function store()
     {
         $this->consume([MediaType::APPLICATION_JSON]);
-        $this->repository->save(Input::json()->all());
+        $this->orszagok->save($this->request->json()->all());
 
-        return Response::make(null, HttpStatus::CREATED);
+        return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
     }
 
-    public function update()
+    public function update($id)
     {
-        return $this->repository->update(Input::json()->all());
+        return $this->orszagok->update($id, $this->request->json()->all());
     }
 
     public function destroy($id)
     {
-        $this->repository->delete($id);
+        $this->orszagok->delete($id);
 
-        return Response::make(null, HttpStatus::OK);
+        return $this->restResponse->plainResponse(null, HttpStatus::OK);
     }
 } 

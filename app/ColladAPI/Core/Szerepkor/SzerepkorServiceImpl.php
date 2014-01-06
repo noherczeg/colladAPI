@@ -9,4 +9,8 @@ class SzerepkorServiceImpl extends CRUDServiceImpl implements SzerepkorService {
         $this->repository = $szerepkorRepository;
     }
 
+    public function findByIdWithAll($szerepkorId)
+    {
+        return $this->repository->findByIdWithAll($szerepkorId);
+    }
 }

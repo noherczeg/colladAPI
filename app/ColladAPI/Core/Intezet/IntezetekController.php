@@ -1,63 +1,60 @@
 <?php namespace ColladAPI\Core\Intezet;
 
-use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Response;
 use Noherczeg\RestExt\Controllers\RestExtController;
-use Noherczeg\RestExt\Facades\RestExt;
-use Noherczeg\RestExt\Facades\RestLinker;
-use Noherczeg\RestExt\Facades\RestResponse;
 use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
 
 class IntezetekController extends RestExtController {
 
+    private $intezetek;
+
     public function __construct(IntezetRepository $repo)
     {
         parent::__construct();
-        $this->repository = $repo;
+        $this->intezetek = $repo;
     }
 
     public function index()
     {
         if ($this->pageParam())
-            $this->repository->enablePagination(10);
+            $this->intezetek->enablePagination(10);
 
-        $resource = RestExt::from($this->repository->all())->links()->create(true);
+        $resource = $this->restExt->from($this->intezetek->all())->links()->create();
 
-        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLink($this->linker->createParentLink());
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function show($id)
     {
-        $intezet = $this->repository->findByIdWithAll($id);
+        $intezet = $this->intezetek->findByIdWithAll($id);
 
-        $resource = RestExt::from($intezet)->links()->create(true);
-        $resource->addLink(RestLinker::createParentLink());
-        $resource->addLinks(RestLinker::linksToEntityRelations($intezet));
+        $resource = $this->restExt->from($intezet)->links()->create();
+        $resource->addLink($this->linker->createParentLink());
+        $resource->addLinks($this->linker->linksToEntityRelations($intezet));
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function store()
     {
         $this->consume([MediaType::APPLICATION_JSON]);
-        $this->repository->save(Input::json()->all());
+        $this->intezetek->save($this->request->json()->all());
 
-        return Response::make(null, HttpStatus::CREATED);
+        return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
     }
 
-    public function update()
+    public function update($id)
     {
-        return $this->repository->update(Input::json()->all());
+        return $this->intezetek->update($id, $this->request->json()->all());
     }
 
     public function destroy($id)
     {
-        $this->repository->delete($id);
+        $this->intezetek->delete($id);
 
-        return Response::make(null, HttpStatus::OK);
+        return $this->restResponse->plainResponse(null, HttpStatus::OK);
     }
 
 } 

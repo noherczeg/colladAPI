@@ -4,4 +4,6 @@ use ColladAPI\Core\Rest\CRUDService;
 
 interface SzerepkorService extends CRUDService {
 
+    public function findByIdWithAll($szerepkorId);
+
 } 

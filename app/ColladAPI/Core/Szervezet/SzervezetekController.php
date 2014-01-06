@@ -1,65 +1,62 @@
 <?php namespace ColladAPI\Core\Szervezet;
 
-use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Response;
 use Noherczeg\RestExt\Controllers\RestExtController;
-use Noherczeg\RestExt\Facades\RestExt;
-use Noherczeg\RestExt\Facades\RestLinker;
-use Noherczeg\RestExt\Facades\RestResponse;
 use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
 use Noherczeg\RestExt\Services\AuthorizationService;
 
 class SzervezetekController extends RestExtController {
 
+    private $szervezetek;
+
     public function __construct(SzervezetService $service, AuthorizationService $auth)
     {
         parent::__construct();
-        $this->service = $service;
+        $this->szervezetek = $service;
         $this->authorizationService = $auth;
     }
 
     public function index()
     {
         if ($this->pageParam())
-            $this->service->enablePagination(10);
+            $this->szervezetek->enablePagination(10);
 
-        $resource = RestExt::from($this->service->all())->links()->create(true);
+        $resource = $this->restExt->from($this->szervezetek->all())->links()->create();
 
-        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLink($this->linker->createParentLink());
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function show($id)
     {
-        $szak = $this->service->findByIdWithAll($id);
+        $szak = $this->szervezetek->findByIdWithAll($id);
 
-        $resource = RestExt::from($szak)->links()->create(true);
-        $resource->addLink(RestLinker::createParentLink());
-        $resource->addLinks(RestLinker::linksToEntityRelations($szak));
+        $resource = $this->restExt->from($szak)->links()->create();
+        $resource->addLink($this->linker->createParentLink());
+        $resource->addLinks($this->linker->linksToEntityRelations($szak));
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function store()
     {
         $this->consume([MediaType::APPLICATION_JSON]);
-        $this->service->save(Input::json()->all());
+        $this->szervezetek->save($this->request->json()->all());
 
-        return Response::make(null, HttpStatus::CREATED);
+        return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
     }
 
-    public function update()
+    public function update($id)
     {
-        return $this->service->update(Input::json()->all());
+        return $this->szervezetek->update($id, $this->request->json()->all());
     }
 
     public function destroy($id)
     {
-        $this->service->delete($id);
+        $this->szervezetek->delete($id);
 
-        return Response::make(null, HttpStatus::OK);
+        return $this->restResponse->plainResponse(null, HttpStatus::OK);
     }
 
 } 

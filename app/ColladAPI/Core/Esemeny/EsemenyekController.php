@@ -1,6 +1,5 @@
 <?php namespace ColladAPI\Core\Esemeny;
 
-use Illuminate\Support\Facades\Input;
 use Noherczeg\RestExt\Controllers\RestExtController;
 use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
@@ -24,7 +23,7 @@ class EsemenyekController extends RestExtController {
     {
         $this->setPaginationFor($this->esemenyek);
 
-        $resource = $this->restExt->from($this->esemenyek->all())->links()->create();
+        $resource = $this->restExt->from($this->esemenyek->all())->links()->create(true);
 
         $resource->addLink($this->linker->createParentLink());
 
@@ -45,14 +44,14 @@ class EsemenyekController extends RestExtController {
     public function store()
     {
         $this->consume([MediaType::APPLICATION_JSON]);
-        $this->esemenyek->save(Input::json()->all());
+        $this->esemenyek->save($this->request->json()->all());
 
         return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
     }
 
     public function update($id)
     {
-        return $this->esemenyek->update($id, Input::json()->all());
+        return $this->esemenyek->update($id, $this->request->json()->all());
     }
 
     public function destroy($id)

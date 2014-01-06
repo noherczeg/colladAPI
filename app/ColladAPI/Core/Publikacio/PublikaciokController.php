@@ -1,7 +1,6 @@
 <?php namespace ColladAPI\Core\Publikacio;
 
 use ColladAPI\Core\Nyelv\NyelvRepository;
-use Illuminate\Support\Facades\Input;
 use Noherczeg\RestExt\Controllers\RestExtController;
 use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
@@ -54,14 +53,14 @@ class PublikaciokController extends RestExtController {
     public function store()
     {
         $this->consume([MediaType::APPLICATION_JSON]);
-        $this->publikaciok->save(Input::json()->all());
+        $this->publikaciok->save($this->request->json()->all());
 
         return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
     }
 
     public function update($id)
     {
-        return $this->publikaciok->update($id, Input::json()->all());
+        return $this->publikaciok->update($id, $this->request->json()->all());
     }
 
     public function destroy($id)
@@ -84,7 +83,7 @@ class PublikaciokController extends RestExtController {
     public function addNyelv($pubId)
     {
         // nem letezo nyelvet nem lehet hozzaadni, ezert a postolt adatokbol nekunk csak az id kell
-        $nyelv = $this->nyelvek->findById(Input::get('id'));
+        $nyelv = $this->nyelvek->findById($this->request->get('id'));
         $this->publikaciok->addNyelvForPublikacio($pubId, $nyelv);
 
         return $this->restResponse->plainResponse(null, HttpStatus::OK);

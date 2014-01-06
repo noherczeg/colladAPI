@@ -1,7 +1,5 @@
 <?php namespace ColladAPI\Core\Bevetel;
 
-use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Response;
 use Noherczeg\RestExt\Controllers\RestExtController;
 use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
@@ -46,14 +44,14 @@ class BevetelekController extends RestExtController {
     public function store()
     {
         $this->consume([MediaType::APPLICATION_JSON]);
-        $this->bevetelek->save(Input::json()->all());
+        $this->bevetelek->save($this->request->json()->all());
 
         return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
     }
 
     public function update($id)
     {
-        return $this->bevetelek->update($id, Input::json()->all());
+        return $this->bevetelek->update($id, $this->request->json()->all());
     }
 
     public function destroy($id)

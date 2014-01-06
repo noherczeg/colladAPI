@@ -1,67 +1,62 @@
 <?php namespace ColladAPI\Core\Palyazat;
 
-use Illuminate\Support\Facades\Input;
-use Illuminate\Support\Facades\Response;
 use Noherczeg\RestExt\Controllers\RestExtController;
-use Noherczeg\RestExt\Facades\RestExt;
-use Noherczeg\RestExt\Facades\RestLinker;
-use Noherczeg\RestExt\Facades\RestResponse;
 use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
 use Noherczeg\RestExt\Services\AuthorizationService;
 
 class PalyazatokController extends RestExtController {
 
-    protected $palyazatService;
+    private $palyazatok;
 
     public function __construct(PalyazatService $service, AuthorizationService $auth)
     {
         parent::__construct();
-        $this->palyazatService = $service;
+        $this->palyazatok = $service;
         $this->authorizationService = $auth;
     }
 
     public function index()
     {
         if ($this->pageParam())
-            $this->palyazatService->enablePagination(10);
+            $this->palyazatok->enablePagination(10);
 
-        $resource = RestExt::from($this->palyazatService->all())->links()->create(true);
+        $resource = $this->restExt->from($this->palyazatok->all())->links()->create();
 
-        $resource->addLink(RestLinker::createParentLink());
+        $resource->addLink($this->linker->createParentLink());
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function show($id)
     {
-        $publikacio = $this->palyazatService->findByIdWithAll($id);
+        $publikacio = $this->palyazatok->findByIdWithAll($id);
 
-        $resource = RestExt::from($publikacio)->links()->create(true);
-        $resource->addLink(RestLinker::createParentLink());
-        $resource->addLinks(RestLinker::linksToEntityRelations($publikacio));
+        $resource = $this->restExt->from($publikacio)->links()->create();
+        $resource->addLink($this->linker->createParentLink());
+        $resource->addLinks($this->linker->linksToEntityRelations($publikacio));
 
-        return RestResponse::sendResource($resource);
+        return $this->restResponse->sendResource($resource);
     }
 
     public function store()
     {
         $this->consume([MediaType::APPLICATION_JSON]);
-        $this->palyazatService->save(Input::json()->all());
+        $this->palyazatok->save($this->request->json()->all());
 
-        return Response::make(null, HttpStatus::CREATED);
+        return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
     }
 
-    public function update()
+    public function update($id)
     {
-        return $this->palyazatService->update(Input::json()->all());
+        return $this->palyazatok->update($id, $this->request->json()->all());
     }
 
     public function destroy($id)
     {
-        $this->palyazatService->delete($id);
+        $this->palyazatok->delete($id);
 
-        return Response::make(null, HttpStatus::OK);
+        return $this->restResponse->plainResponse(null, HttpStatus::OK);
     }
 
 }

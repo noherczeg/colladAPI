@@ -1,7 +1,6 @@
 <?php namespace ColladAPI\Core\Szemely;
 
 use Noherczeg\RestExt\Controllers\RestExtController;
-use Noherczeg\RestExt\Http\Resource;
 use Noherczeg\RestExt\Providers\HttpStatus;
 use Noherczeg\RestExt\Providers\MediaType;
 
@@ -18,7 +17,7 @@ class SzemelyekController extends RestExtController {
 
     //protected $charset = Charset::ISO_8859_2;
 
-    public function __construct(SzemelyRepository $szemelyRepository)
+    public function __construct(SzemelyService $szemelyRepository)
     {
         parent::__construct();
         $this->szemelyek = $szemelyRepository;
@@ -47,7 +46,6 @@ class SzemelyekController extends RestExtController {
             return $this->createResource($this->service->all());
         });*/
 
-        $resource = new Resource();
         $atTime = new \DateTime($this->request->query('in'));
         if ($atTime === null) {
             $atTime = new \DateTime();
@@ -70,7 +68,7 @@ class SzemelyekController extends RestExtController {
 
 	public function store()
     {
-        $szemely = $this->szemelyek->register(Input::json()->all());
+        $this->szemelyek->register($this->request->json()->all());
 
         return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
 	}
@@ -88,7 +86,7 @@ class SzemelyekController extends RestExtController {
 
 	public function update($id)
     {
-        $updated = $this->szemelyek->update($id, Input::json()->all());
+        $this->szemelyek->update($id, $this->request->json()->all());
 
         return $this->restResponse->plainResponse(null, HttpStatus::OK);
 	}

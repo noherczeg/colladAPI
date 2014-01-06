@@ -1,8 +1,8 @@
 <?php namespace ColladAPI\Core\Alkotas;
 
-use Illuminate\Support\Facades\Input;
 use Noherczeg\RestExt\Controllers\RestExtController;
 use Noherczeg\RestExt\Providers\HttpStatus;
+use Noherczeg\RestExt\Providers\MediaType;
 
 class AlkotasokController extends RestExtController
 {
@@ -39,6 +39,7 @@ class AlkotasokController extends RestExtController
 
     public function store()
     {
+        $this->consume([MediaType::APPLICATION_JSON]);
         $this->alkotasok->save($this->request->json()->all());
 
         return $this->restResponse->plainResponse(null, HttpStatus::CREATED);
